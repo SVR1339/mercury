@@ -14,6 +14,20 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         Loaded += MainWindow_Loaded;
+        TrySetWindowIcon();
+    }
+
+    private void TrySetWindowIcon()
+    {
+        try
+        {
+            var uri = new Uri("pack://application:,,,/assets/icon.png", UriKind.RelativeOrAbsolute);
+            Icon = System.Windows.Media.Imaging.BitmapFrame.Create(uri);
+        }
+        catch
+        {
+            // Failsafe fallback
+        }
     }
 
     private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
