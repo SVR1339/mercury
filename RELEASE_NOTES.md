@@ -5,6 +5,7 @@
 ---
 
 ### 🌟 Executive Overview
+
 Mercury bridges the gap between open-source software and effortless local execution. By eliminating manual environment setup, runtime installations, and terminal permission barriers, Mercury allows developers, data scientists, engineers, and everyday users to install and run any project or command-line installation script in a single step.
 
 ---
@@ -71,13 +72,18 @@ curl -fsSL https://raw.githubusercontent.com/svreddy313-dev/mercury/main/install
 
 ### 🔒 Cryptographic Checksums (SHA-256)
 
-| Asset | SHA-256 Checksum |
-|---|---|
-| `Mercury-Setup.exe` | `D3B5D7A041BDCEEAB70A654E9A305851B848E9138889D92EB292B16AB56C5814` |
-| `mercury.exe` | `9E894787FEAA38BB5BFE97C20E2F91C4E2D9505F2F2B2B316C7E562981D14E2A` |
+| Asset | Platform / Architecture | SHA-256 Checksum |
+|---|---|---|
+| `Mercury-Setup.exe` | Windows x64 (GUI Desktop Installer) | `D3B5D7A041BDCEEAB70A654E9A305851B848E9138889D92EB292B16AB56C5814` |
+| `mercury.exe` | Windows x64 (Standalone CLI) | `9E894787FEAA38BB5BFE97C20E2F91C4E2D9505F2F2B2B316C7E562981D14E2A` |
+| `mercury-win-x64.exe` | Windows x64 (Direct CLI Binary) | `9E894787FEAA38BB5BFE97C20E2F91C4E2D9505F2F2B2B316C7E562981D14E2A` |
+| `mercury-osx-arm64` | macOS Apple Silicon (M1/M2/M3/M4) | `F339210B537FC88A10B005A0161F07E3519CA86A42286E574ACEF2A7D3CC14E5` |
+| `mercury-osx-x64` | macOS Intel (x64) | `67A09A77BD4B2E691637AE33080BE5DA6C1FBD9AAA2C9B61B717656E598AF004` |
 
 ---
 
 ### 🤝 Community & Support
 * **GitHub Repository**: [https://github.com/svreddy313-dev/mercury](https://github.com/svreddy313-dev/mercury)
+* **Discussions**: [https://github.com/svreddy313-dev/mercury/discussions](https://github.com/svreddy313-dev/mercury/discussions)
+* **Issue Tracker**: [https://github.com/svreddy313-dev/mercury/issues](https://github.com/svreddy313-dev/mercury/issues)
 * **License**: MIT License
