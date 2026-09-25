@@ -36,4 +36,4 @@ Requirements:
 
 No .NET runtime installation is needed — everything is fully self-contained!
 
-GitHub: https://github.com/user/mercury
+GitHub: https://github.com/svreddy313-dev/mercury

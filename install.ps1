@@ -54,13 +54,24 @@ if (Test-Path $CliProj) {
 } else {
     # Download pre-built
     $Repo = "svreddy313-dev/mercury"
-    $DownloadUrl = "https://github.com/$Repo/releases/latest/download/mercury-win-x64.exe"
+    $DownloadUrls = @(
+        "https://github.com/$Repo/releases/latest/download/mercury.exe",
+        "https://github.com/$Repo/releases/latest/download/mercury-win-x64.exe"
+    )
     
-    try {
-        $mercuryExe = Join-Path $BinDir "mercury.exe"
-        Invoke-WebRequest -Uri $DownloadUrl -OutFile $mercuryExe -UseBasicParsing
-        Write-Ok "Downloaded Mercury"
-    } catch {
+    $downloadSuccess = $false
+    $mercuryExe = Join-Path $BinDir "mercury.exe"
+    foreach ($url in $DownloadUrls) {
+        try {
+            Invoke-WebRequest -Uri $url -OutFile $mercuryExe -UseBasicParsing
+            Write-Ok "Downloaded Mercury from $url"
+            $downloadSuccess = $true
+            break
+        } catch {
+            continue
+        }
+    }
+    if (-not $downloadSuccess) {
         Write-Fail "Download failed. Build from source: git clone https://github.com/$Repo && cd mercury && .\install.ps1"
     }
 }

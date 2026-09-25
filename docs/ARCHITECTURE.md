@@ -1,97 +1,150 @@
-# Universal GitHub Project Installer — Architecture
+# Mercury — Technical Architecture & Engine Design
 
 ## Overview
 
-Universal GitHub Project Installer (UGPI) is a native Windows desktop application that automates the setup of GitHub repositories. Users provide a repo folder, ZIP, or URL, and UGPI handles detection, dependency installation, building, testing, and launching.
+**Mercury** is a cross-platform (Windows & Apple macOS) universal application and project runner. It automates the detection, dependency acquisition, permission configuration, and execution of any GitHub repository or terminal install command.
+
+Users can supply:
+
+- Repository URLs (`https://github.com/owner/repo`)
+- GitHub shorthands (`owner/repo`)
+- Direct `git clone` commands (`git clone https://github.com/...`)
+- PowerShell one-liners (`irm ... | iex`)
+- Apple Terminal / Unix bash one-liners (`curl -fsSL ... | bash`)
+- Package manager installs (`pip install git+...`, `npm`, `cargo`)
+- Local project folders or ZIP archives
+
+Mercury orchestrates environment detection, security verification, dependency installation, and process execution with full interactive terminal access.
+
+---
 
 ## Solution Structure
 
-```
+```text
 UniversalGitHubInstaller.sln
 ├── src/
-│   ├── UniversalGitHubInstaller.Core/     # Shared core engine (netstandard/net8.0)
-│   │   ├── Detection/                     # Project technology detectors
-│   │   │   ├── IProjectDetector.cs        # Detector interface
-│   │   │   ├── ProjectScanner.cs          # Orchestrates all detectors
-│   │   │   ├── PythonDetector.cs
-│   │   │   ├── NodeDetector.cs
-│   │   │   ├── DotNetDetector.cs
-│   │   │   ├── RustDetector.cs
-│   │   │   ├── GoDetector.cs
-│   │   │   ├── JavaDetector.cs
-│   │   │   ├── PhpDetector.cs
-│   │   │   ├── RubyDetector.cs
-│   │   │   ├── CppDetector.cs
-│   │   │   ├── DockerDetector.cs
-│   │   │   └── EnvironmentDetector.cs
+│   ├── UniversalGitHubInstaller.Core/       # Shared core engine (.NET 8)
+│   │   ├── Detection/                       # Polyglot technology detectors
+│   │   │   ├── IProjectDetector.cs          # Detector interface contract
+│   │   │   ├── ProjectScanner.cs            # Orchestrates all language detectors
+│   │   │   ├── PythonDetector.cs            # pip, venv, poetry, conda, pyproject.toml
+│   │   │   ├── NodeDetector.cs              # npm, yarn, pnpm, bun, package.json
+│   │   │   ├── DotNetDetector.cs            # .sln, .csproj, dotnet CLI
+│   │   │   ├── RustDetector.cs              # Cargo.toml, rustc
+│   │   │   ├── GoDetector.cs                # go.mod, go build
+│   │   │   ├── JavaDetector.cs              # Maven (pom.xml), Gradle
+│   │   │   ├── PhpDetector.cs               # Composer (composer.json)
+│   │   │   ├── RubyDetector.cs              # Bundler (Gemfile)
+│   │   │   ├── CppDetector.cs               # CMake, Make, Meson
+│   │   │   ├── DockerDetector.cs            # Dockerfile, docker-compose.yml
+│   │   │   └── EnvironmentDetector.cs       # System runtime detection
 │   │   ├── Models/
-│   │   │   ├── ProjectInfo.cs             # Scan result model
-│   │   │   ├── ProjectProfile.cs          # Saved project profile
-│   │   │   ├── OperationResult.cs         # Command execution result
-│   │   │   ├── CommandClassification.cs   # Security classification
-│   │   │   └── WindowsEnvironmentInfo.cs  # System environment state
+│   │   │   ├── ProjectInfo.cs               # Scanned project metadata & tech stack
+│   │   │   ├── ProjectProfile.cs            # Saved project workspace configuration
+│   │   │   ├── OperationResult.cs           # Command execution exit codes & streams
+│   │   │   ├── CommandClassification.cs     # Security threat level (Safe/Review/Blocked)
+│   │   │   └── WindowsEnvironmentInfo.cs    # Host environment diagnostics
 │   │   ├── Runtime/
-│   │   │   └── WindowsEnvironmentScanner.cs  # System diagnostics
+│   │   │   └── WindowsEnvironmentScanner.cs # Diagnostic scanner for PATH & runtimes
 │   │   ├── Security/
-│   │   │   ├── CommandClassifier.cs       # SAFE/REVIEW/DANGEROUS
-│   │   │   └── SecurityScanner.cs         # Repository security scan
+│   │   │   ├── CommandClassifier.cs         # Heuristic & pattern-based command safety
+│   │   │   └── SecurityScanner.cs           # Static repo scan for suspicious patterns
 │   │   ├── Services/
-│   │   │   ├── ProcessRunner.cs           # Async process execution
-│   │   │   ├── GitService.cs              # Git clone/pull/status
-│   │   │   ├── ZipService.cs              # Safe ZIP extraction
-│   │   │   └── ProjectProfileService.cs   # Profile save/load
+│   │   │   ├── SmartCommandProcessor.cs     # Universal command & URL syntax engine
+│   │   │   ├── TerminalService.cs           # Native terminal launcher (pwsh, cmd, apple)
+│   │   │   ├── ProcessRunner.cs             # Async process execution with streaming
+│   │   │   ├── GitService.cs                # Git clone/pull/status & repo resolution
+│   │   │   ├── ZipService.cs                # Safe ZIP archive extraction
+│   │   │   └── ProjectProfileService.cs     # Workspace persistence & caching
 │   │   └── Logging/
-│   │       └── AppLogger.cs               # Structured file logging
+│   │       └── AppLogger.cs                 # Structured file logger
 │   │
-│   ├── UniversalGitHubInstaller/          # WPF GUI (net8.0-windows)
-│   │   ├── App.xaml / App.xaml.cs
+│   ├── UniversalGitHubInstaller/            # WPF GUI application (.NET 8 Windows)
+│   │   ├── App.xaml / App.xaml.cs           # Application entry & global exception handling
 │   │   ├── Views/
-│   │   │   └── MainWindow.xaml / .cs      # Main application window
+│   │   │   └── MainWindow.xaml / .cs        # Modern reactive UI (Status, Logs, Terminals)
 │   │   ├── ViewModels/
-│   │   │   ├── BaseViewModel.cs           # INotifyPropertyChanged base
-│   │   │   ├── MainViewModel.cs           # Main application logic
-│   │   │   └── RelayCommand.cs            # ICommand implementation
+│   │   │   ├── BaseViewModel.cs             # INotifyPropertyChanged base implementation
+│   │   │   ├── MainViewModel.cs             # UI state machine & orchestration logic
+│   │   │   └── RelayCommand.cs              # Async/sync command bindings
 │   │   └── Converters/
-│   │       └── BoolToVisibilityConverter.cs
+│   │       └── BoolToVisibilityConverter.cs # WPF visibility conversion
 │   │
-│   └── UniversalGitHubInstaller.Cli/      # CLI tool (net8.0, single-file)
-│       └── Program.cs                     # ugi.exe entry point
+│   └── UniversalGitHubInstaller.Cli/        # CLI tool (.NET 8, single-file cross-platform)
+│       └── Program.cs                       # mercury / ugi console entry point
 │
 ├── tests/
-│   └── UniversalGitHubInstaller.Tests/    # Unit tests (xUnit)
+│   └── UniversalGitHubInstaller.Tests/      # xUnit automated test suite (39 tests)
 │
-├── installer.iss                          # Inno Setup installer script
-├── app.ico                                # Application icon
-└── dist/                                  # Final installer output
-    └── Universal-GitHub-Project-Installer-Setup.exe
+├── assets/                                  # Logos, clean geometry, application icons
+│   ├── logo.png                             # Hi-res professional logo (liquid mercury droplet)
+│   ├── icon.png                             # Square application icon
+│   └── app.ico                              # Standard multi-resolution DIB uncompressed icon
+├── installer.iss                            # Inno Setup 6 production installer script
+├── install.ps1                              # One-line PowerShell web installer
+├── install.sh                               # One-line Apple Terminal / bash installer
+└── dist/
+    └── Mercury-Setup.exe                    # Production Windows desktop installer
 ```
 
-## Technology Stack
+---
 
-| Component | Technology |
-|-----------|-----------|
-| **GUI** | C# / .NET 8 / WPF |
-| **CLI** | C# / .NET 8 / Console |
-| **Core Engine** | C# / .NET 8 Class Library |
-| **Installer** | Inno Setup 6 |
-| **Packaging** | Self-contained x64, no runtime required |
-| **Tests** | xUnit |
+## Technical Specifications
 
-## Architecture Principles
+| Component | Target Runtime | Packaging | Architecture |
+| :--- | :--- | :--- | :--- |
+| **Mercury GUI** | .NET 8 (Windows Desktop WPF) | Self-Contained / Single Executable | x64 |
+| **Mercury CLI** | .NET 8 Console | Self-Contained Single-File Binary | x64 / macOS ARM64 |
+| **Mercury Core** | .NET 8 Class Library | Embedded Assembly | Cross-Platform |
+| **Installer** | Inno Setup 6 | Native Win32 Setup Executable | x64 |
+| **Test Suite** | xUnit + FluentAssertions | .NET 8 Test Project | Cross-Platform |
 
-1. **Shared Core Engine**: GUI and CLI share `UniversalGitHubInstaller.Core`. No duplicated logic.
-2. **Modular Detection**: Each technology has its own `IProjectDetector` implementation.
-3. **Security-First**: All commands classified as SAFE/REVIEW/DANGEROUS before execution.
-4. **Async-First**: All long operations are async with cancellation support.
-5. **Self-Contained**: End user does not need to install .NET runtime.
+---
 
-## Deployment
+## Core Systems & Pipelines
 
-- **Install Location**: `%LOCALAPPDATA%\Programs\Universal GitHub Project Installer`
-- **CLI on PATH**: Optional `ugi.exe` added to user PATH
-- **Context Menu**: Optional "Install with UGPI" right-click on folders
-- **Logs**: `%LOCALAPPDATA%\UniversalGitHubProjectInstaller\logs\`
+### 1. Smart Command Processor (`SmartCommandProcessor`)
 
-## Version
+The command engine analyzes unstructured user input and routes it to the optimal execution path:
 
-- v1.0.0
+- **PowerShell One-Liners (`irm ... | iex`)**: Detected and routed to `powershell.exe` with `-NoProfile -ExecutionPolicy Bypass`, ensuring scripts execute seamlessly without execution policy restrictions.
+- **Apple / Unix One-Liners (`curl ... | bash`)**: Detected and routed to macOS `zsh` or native bash with proper pipe handling and streaming output.
+- **Git Clone Commands (`git clone <url>`)**: URL is extracted, cloned into the project workspace (`%LOCALAPPDATA%\Mercury\projects`), and automatically passed to the project scanner for dependency resolution.
+- **Package Manager Invocation (`pip install ...`, `npm install ...`)**: Executed directly within the active project directory environment.
+- **Shorthand Repositories (`owner/repo`)**: Automatically converted to full HTTPS Git URLs and cloned.
+
+### 2. Native Terminal Integration (`TerminalService`)
+
+Developers need direct access to native terminals during development. Mercury provides one-click terminal launching:
+
+- **Windows PowerShell**: Opens an interactive session in the project root with `-ExecutionPolicy Bypass`.
+- **Command Prompt (CMD)**: Launches standard Command Prompt in the target project folder.
+- **Apple Terminal**: On macOS, triggers `open -a Terminal <path>` to spawn native Apple Terminal.
+- **Project Directory Explorer**: Opens Windows File Explorer or macOS Finder at the project location.
+
+### 3. Polyglot Project Scanner (`ProjectScanner`)
+
+Mercury's scanner evaluates repository files in parallel across 10+ technology stacks:
+
+1. Identifies package managers (`pip`, `poetry`, `npm`, `pnpm`, `yarn`, `bun`, `cargo`, `dotnet`, `maven`, `gradle`, `cmake`, `composer`, `bundle`).
+2. Generates optimized dependency installation commands (e.g. `python -m pip install -r requirements.txt`).
+3. Generates optimal build and test commands.
+4. Identifies the primary executable entry point (`main.py`, `index.js`, `cargo run`, `dotnet run`).
+
+### 4. Security Verification Engine (`CommandClassifier` & `SecurityScanner`)
+
+Security is built into the execution lifecycle:
+
+- **Safe Commands**: Read-only, build, and package installation commands (`git clone`, `npm install`, `dotnet build`) execute immediately.
+- **Review Required**: Commands modifying system configurations or accessing sensitive paths require explicit user confirmation.
+- **Dangerous Commands**: Potentially harmful operations (`format`, `rmdir /s /q C:\`, `del /f /s /q C:\Windows`) are blocked by default.
+
+---
+
+## Deployment & Persistence
+
+- **Installer Output**: `dist\Mercury-Setup.exe` (Self-contained, includes desktop icon, Start Menu shortcut, optional PATH entry, and right-click folder context menu).
+- **CLI Executable**: `publish\cli\mercury.exe` (Single-file executable for CI/CD and terminal automation).
+- **Projects Directory**: `%LOCALAPPDATA%\Mercury\projects\`
+- **Profiles & State**: `%LOCALAPPDATA%\Mercury\profiles.json`
+- **Application Logs**: `%LOCALAPPDATA%\Mercury\logs\`
