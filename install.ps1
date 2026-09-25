@@ -3,13 +3,12 @@
 
 $ErrorActionPreference = 'Stop'
 
-$AppName = "Mercury"
-$InstallDir = Join-Path $env:LOCALAPPDATA $AppName
+$InstallDir = Join-Path $env:LOCALAPPDATA "Mercury"
 $BinDir = Join-Path $InstallDir "bin"
 
 function Write-Header {
     Write-Host ""
-    Write-Host "  ☿ $AppName Installer" -ForegroundColor Cyan
+    Write-Host "  ☿ Mercury Installer" -ForegroundColor Cyan
     Write-Host "  Any GitHub file & Direct Repo PowerShell Installer for Windows and Apple" -ForegroundColor Blue
     Write-Host ""
 }
@@ -29,7 +28,7 @@ if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
 Write-Ok "Git found: $(git --version)"
 
 # ─── Install ───
-Write-Step "Installing $AppName..."
+Write-Step "Installing Mercury..."
 
 New-Item -ItemType Directory -Path $BinDir -Force | Out-Null
 
@@ -64,7 +63,7 @@ if (Test-Path $CliProj) {
     foreach ($url in $DownloadUrls) {
         try {
             Invoke-WebRequest -Uri $url -OutFile $mercuryExe -UseBasicParsing
-            Write-Ok "Downloaded $AppName from $url"
+            Write-Ok "Downloaded Mercury from $url"
             $downloadSuccess = $true
             break
         } catch {
@@ -90,7 +89,7 @@ $env:PATH = "$env:PATH;$BinDir"
 
 # ─── Done ───
 Write-Host ""
-Write-Host "  ✓ $AppName installed successfully!" -ForegroundColor Green
+Write-Host "  ✓ Mercury installed successfully!" -ForegroundColor Green
 Write-Host ""
 Write-Host "  Quick start:" -ForegroundColor White
 Write-Host "    mercury install https://github.com/user/project"
