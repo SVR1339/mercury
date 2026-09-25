@@ -1,21 +1,22 @@
 <div align="center">
 
-<img src="assets/logo.png" alt="Mercury Logo" width="160" height="160" style="border-radius: 24px; margin-bottom: 12px;" />
+<img src="assets/logo.png" alt="Mercury Logo" width="160" height="160" style="border-radius: 28px; margin-bottom: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.3);" />
 
 # Mercury
 
-### Any GitHub File & Direct Repo PowerShell / Terminal Installer for Windows & Apple
+### Universal GitHub & Terminal Installer for Windows & Apple
 
 **Paste Any Command or Repo → Auto-Detect → Grant Shell & Internet Access → Download & Install Dependencies → Run**
 
-[![Windows](https://img.shields.io/badge/Windows-10%2F11%20(PowerShell%20%2B%20CMD)-0078D6?style=for-the-badge&logo=windows)](../../releases/latest)
-[![macOS](https://img.shields.io/badge/macOS-Apple%20Terminal%20(zsh%20%2B%20bash)-000?style=for-the-badge&logo=apple)](../../releases/latest)
+[![Windows](https://img.shields.io/badge/Windows-10%2F11%20(PowerShell%20%2B%20CMD)-0078D6?style=for-the-badge&logo=windows)](https://github.com/svreddy313-dev/mercury/releases/latest)
+[![macOS](https://img.shields.io/badge/macOS-Apple%20Terminal%20(zsh%20%2B%20bash)-000?style=for-the-badge&logo=apple)](https://github.com/svreddy313-dev/mercury/releases/latest)
+[![Latest Release](https://img.shields.io/badge/Release-v1.0.0-success?style=for-the-badge)](https://github.com/svreddy313-dev/mercury/releases/latest)
 [![.NET 8](https://img.shields.io/badge/.NET-8.0%20Self--Contained-512BD4?style=for-the-badge&logo=dotnet)](https://dotnet.microsoft.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
 ---
 
-[**Download**](../../releases/latest) · [**Quick Start**](#-quick-start) · [**Smart Command Engine**](#-smart-command-processing) · [**Terminal Access**](#-direct-terminal-access) · [**CLI**](#-command-line)
+[**Download Installer**](https://github.com/svreddy313-dev/mercury/releases/latest) · [**Quick Start**](#-quick-start) · [**Smart Command Engine**](#-universal-smart-command-processing) · [**Terminal Access**](#-direct-terminal-access) · [**CLI Guide**](#-command-line-cli)
 
 </div>
 
@@ -23,7 +24,7 @@
 
 ## 🚀 Quick Start
 
-### 1. Direct Install in Terminal
+### 1. Direct Install in Terminal (One-Liner)
 
 #### 🪟 Windows (PowerShell)
 ```powershell
@@ -35,41 +36,48 @@ irm https://raw.githubusercontent.com/svreddy313-dev/mercury/main/install.ps1 | 
 curl -fsSL https://raw.githubusercontent.com/svreddy313-dev/mercury/main/install.sh | bash
 ```
 
+---
+
 ### 2. Windows GUI Installer
-Download **`Mercury-Setup.exe`** from [Releases](../../releases/latest) and run it. Includes desktop icon, right-click context menu, and terminal integration.
+
+Download and run the installer:
+- 📦 **[Download Mercury-Setup.exe (v1.0.0)](https://github.com/svreddy313-dev/mercury/releases/download/v1.0.0/Mercury-Setup.exe)** (94 MB, fully self-contained — no .NET runtime required)
+- Includes desktop shortcut, Start Menu entry, optional PATH integration, and right-click folder context menu.
 
 ---
 
 ## ⚡ Universal Smart Command Processing
 
-Mercury accepts **ANY copied install command** or repository string from the internet and executes it directly with full internet access, necessary shell execution policies, and automated dependency setup:
+Mercury solves one of the biggest friction points in developer tools: **running commands copied from the internet**. 
 
-| Copied Input Example | How Mercury Processes It | Shell & Access |
+Simply copy and paste **ANY command or repository URL** into Mercury — it parses the syntax, grants necessary shell permissions (`-ExecutionPolicy Bypass`, TLS 1.2/1.3, zsh), connects to the internet, and installs everything automatically:
+
+| Copied Input Example | How Mercury Processes It | Target Shell & Permissions |
 |---|---|---|
-| `irm https://get.scoop.sh \| iex` | Executes directly in PowerShell with TLS 1.2/1.3 | **PowerShell** (ExecutionPolicy Bypass, Full Web Access) |
-| `curl -fsSL https://bun.sh/install \| bash` | Executes in Apple Terminal / Unix shell | **Apple Terminal / zsh** (Full Web Access) |
-| `git clone https://github.com/pallets/flask` | Clones into workspace, detects Python, installs pip/venv | **Mercury Engine** + Native Shell |
-| `pip install git+https://github.com/...` | Executes pip package manager git install directly | **PowerShell / Apple Terminal** |
+| `irm https://get.scoop.sh \| iex` | Executes installer script with TLS 1.2/1.3 | **PowerShell** (`-ExecutionPolicy Bypass`, Full Web Access) |
+| `curl -fsSL https://bun.sh/install \| bash` | Executes web installer stream | **Apple Terminal / zsh** (Full Web Access) |
+| `git clone https://github.com/pallets/flask` | Clones into `Mercury/projects`, detects stack, installs pip/venv | **Mercury Engine** + Native Shell |
+| `pip install git+https://github.com/...` | Installs Python package from git directly | **Host Terminal** (PowerShell / Apple Terminal) |
 | `facebook/react` | Resolves shorthand to full repo, clones & installs npm | **Mercury Engine** + Auto-Dependencies |
-| `npm install -g pnpm && pnpm setup` | Executes compound pipeline with real-time logs | **Shell Environment** |
+| `npm install -g pnpm && pnpm setup` | Executes compound command pipeline with live output | **Interactive Shell** |
 
 ---
 
 ## 💻 Direct Terminal Access
 
-Mercury empowers users with instant access to their native terminals right from the application:
+Mercury gives you instant, one-click access to your native terminals right inside the application:
 
 - **PowerShell**: Launches Windows PowerShell or PowerShell 7 with `-ExecutionPolicy Bypass`, pre-configured for running any GitHub installer script.
-- **Command Prompt (CMD)**: Launches interactive Windows Command Prompt in the active project directory.
+- **Command Prompt (CMD)**: Launches interactive Windows Command Prompt directly in your active project directory.
 - **Apple Terminal**: Launches native macOS Apple Terminal (`open -a Terminal`) in the project workspace on macOS.
-- **Project Folder**: Instant explorer / finder access to the centralized `Mercury/projects` directory.
+- **Project Hub**: One-click file explorer access to `%LOCALAPPDATA%\Mercury\projects`.
 
 ---
 
 ## ✨ Core Features
 
-### 🔍 Automated Dependency & Project Detection
-Mercury automatically identifies project environments and handles dependency installation:
+### 🔍 Automated Stack & Dependency Detection
+Mercury inspects project manifests and automatically installs all required dependencies:
 - **Python**: `requirements.txt`, `setup.py`, `pyproject.toml`, `Pipfile`, `conda`
 - **Node.js**: `package.json`, `npm`, `yarn`, `pnpm`, `bun`
 - **C# / .NET**: `*.sln`, `*.csproj`, `*.fsproj`
@@ -81,10 +89,10 @@ Mercury automatically identifies project environments and handles dependency ins
 - **C / C++**: `CMakeLists.txt`, `Makefile`, `meson.build`
 - **Docker**: `Dockerfile`, `docker-compose.yml`
 
-### 🛡️ Built-in Security Classification
-- Validates copied web installers, notifying users when scripts request elevated privileges.
-- Prevents accidental execution of destructive payloads.
-- Live streaming output and stdout/stderr capture.
+### 🛡️ Security Verification Engine
+- Analyzes commands before execution and classifies them as **Safe**, **Needs Review**, or **Blocked**.
+- Transparent execution: full streaming output capture for both standard output (`stdout`) and errors (`stderr`).
+- Protects users from accidental destructive system modifications.
 
 ---
 
@@ -95,7 +103,7 @@ Works out of the box on **Windows** and **Apple macOS**:
 ```bash
 # Pass ANY copied command or repo directly to Mercury
 mercury "irm https://raw.githubusercontent.com/... | iex"
-mercury "git clone https://github.com/user/project.git"
+mercury "git clone https://github.com/pallets/flask.git"
 mercury "facebook/react"
 
 # Launch native terminal in project directory
@@ -104,10 +112,11 @@ mercury terminal cmd        # Open CMD
 mercury terminal apple      # Open Apple Terminal
 
 # Clone, scan, and run projects
-mercury install https://github.com/user/project
+mercury install https://github.com/pallets/flask
 mercury scan ./my-project
 mercury info ./my-project
 mercury run ./my-project
+mercury doctor              # Diagnose installed runtimes & tools
 ```
 
 ---
@@ -135,55 +144,16 @@ cd mercury
 chmod +x install.sh && ./install.sh
 ```
 
-### Manual Build
-```bash
-# CLI (cross-platform)
-dotnet publish src/UniversalGitHubInstaller.Cli/UniversalGitHubInstaller.Cli.csproj \
-  -c Release -r osx-arm64 --self-contained true -p:PublishSingleFile=true -o publish/cli
-
-# GUI (Windows only)
-dotnet publish src/UniversalGitHubInstaller/UniversalGitHubInstaller.csproj \
-  -c Release -r win-x64 --self-contained true -o publish/gui
-```
-
----
-
-## 📁 Project Structure
-
-```
-mercury/
-├── install.sh              # macOS/Linux installer
-├── install.ps1             # Windows PowerShell installer
-├── build.bat               # Windows build script
-├── installer.iss           # Windows GUI installer (Inno Setup)
-├── src/
-│   ├── UniversalGitHubInstaller.Core/   # Cross-platform detection engine
-│   ├── UniversalGitHubInstaller/        # Windows WPF GUI
-│   └── UniversalGitHubInstaller.Cli/    # Cross-platform CLI
-└── docs/
-    └── ARCHITECTURE.md
-```
-
 ---
 
 ## 📋 System Requirements
 
 | | Windows | macOS |
 |---|---|---|
-| **OS** | Windows 10+ (64-bit) | macOS 11+ (Intel & Apple Silicon) |
-| **Install** | GUI wizard or PowerShell | Terminal script |
-| **Runtime** | None (self-contained) | None (self-contained) |
-| **Git** | Required | Required |
-
----
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/my-feature`)
-3. Commit your changes (`git commit -m 'Add my feature'`)
-4. Push to the branch (`git push origin feature/my-feature`)
-5. Open a Pull Request
+| **Operating System** | Windows 10 / 11 (64-bit) | macOS 11+ (Intel & Apple Silicon) |
+| **Terminal** | Windows PowerShell / CMD | Apple Terminal (zsh / bash) |
+| **Runtime** | None (100% self-contained) | None (100% self-contained) |
+| **Git** | Recommended for cloning | Recommended for cloning |
 
 ---
 
@@ -195,8 +165,8 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 <div align="center">
 
-**☿ Mercury** — *Install any GitHub project. No hassle. No headaches.*
+**Mercury** — *Install any GitHub project or terminal script. In one click.*
 
-Windows · macOS · CLI
+[Download Latest Release](https://github.com/svreddy313-dev/mercury/releases/latest)
 
 </div>
