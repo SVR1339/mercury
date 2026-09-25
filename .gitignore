@@ -5,6 +5,8 @@ publish/
 dist/
 Output/
 temp/
+*_wpftmp.csproj
+*.wpftmp
 
 # IDE
 .vs/

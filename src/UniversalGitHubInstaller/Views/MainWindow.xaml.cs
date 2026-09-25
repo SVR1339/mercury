@@ -82,7 +82,7 @@ public partial class MainWindow : Window
             var text = (string)e.Data.GetData(DataFormats.Text)!;
             if (!string.IsNullOrWhiteSpace(text))
             {
-                ViewModel.GitUrl = text.Trim();
+                await ViewModel.HandleDropAsync(new[] { text.Trim() });
             }
         }
     }

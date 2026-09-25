@@ -777,6 +777,12 @@ public class MainViewModel : BaseViewModel
             ProjectPath = path;
             await ScanProject();
         }
+        else if (!string.IsNullOrWhiteSpace(path))
+        {
+            // Support URLs, shorthand repos, or install commands passed via command line or dropped text
+            GitUrl = path.Trim();
+            CurrentPage = "Home";
+        }
     }
 }
 

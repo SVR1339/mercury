@@ -86,7 +86,7 @@ curl -fsSL https://raw.githubusercontent.com/svreddy313-dev/mercury/main/install
 
 | Asset | Platform / Architecture | SHA-256 Checksum |
 | :--- | :--- | :--- |
-| `Mercury-Setup.exe` | Windows x64 (GUI Desktop Installer) | `D3B5D7A041BDCEEAB70A654E9A305851B848E9138889D92EB292B16AB56C5814` |
+| `Mercury-Setup.exe` | Windows x64 (GUI Desktop Installer) | `E98CC41D082391F8D30EEA85153CA385BF7880E05A12FB3535862059D11A1D01` |
 | `mercury.exe` | Windows x64 (Standalone CLI) | `9E894787FEAA38BB5BFE97C20E2F91C4E2D9505F2F2B2B316C7E562981D14E2A` |
 | `mercury-win-x64.exe` | Windows x64 (Direct CLI Binary) | `9E894787FEAA38BB5BFE97C20E2F91C4E2D9505F2F2B2B316C7E562981D14E2A` |
 | `mercury-osx-arm64` | macOS Apple Silicon (M1/M2/M3/M4) | `F339210B537FC88A10B005A0161F07E3519CA86A42286E574ACEF2A7D3CC14E5` |
