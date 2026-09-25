@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EB9D5FE3-E8BC-4096-AB9F-3D3B46B575F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalGitHubInstaller.Core", "src\UniversalGitHubInstaller.Core\UniversalGitHubInstaller.Core.csproj", "{39BC8CEC-414F-4E59-9C46-4E796912C3A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalGitHubInstaller", "src\UniversalGitHubInstaller\UniversalGitHubInstaller.csproj", "{34EB4BD3-C774-434B-8CBB-7DF3A315AA31}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalGitHubInstaller.Cli", "src\UniversalGitHubInstaller.Cli\UniversalGitHubInstaller.Cli.csproj", "{D9477BFC-7870-4F12-AAEB-B56CF8848A09}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{09F4FA5B-F281-4D47-A2E7-E303CF757134}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalGitHubInstaller.Tests", "tests\UniversalGitHubInstaller.Tests\UniversalGitHubInstaller.Tests.csproj", "{EF0A3E9E-5945-4C28-8DDB-4FD8AA6E0B3B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{39BC8CEC-414F-4E59-9C46-4E796912C3A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39BC8CEC-414F-4E59-9C46-4E796912C3A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39BC8CEC-414F-4E59-9C46-4E796912C3A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39BC8CEC-414F-4E59-9C46-4E796912C3A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34EB4BD3-C774-434B-8CBB-7DF3A315AA31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34EB4BD3-C774-434B-8CBB-7DF3A315AA31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34EB4BD3-C774-434B-8CBB-7DF3A315AA31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34EB4BD3-C774-434B-8CBB-7DF3A315AA31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9477BFC-7870-4F12-AAEB-B56CF8848A09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9477BFC-7870-4F12-AAEB-B56CF8848A09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9477BFC-7870-4F12-AAEB-B56CF8848A09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9477BFC-7870-4F12-AAEB-B56CF8848A09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF0A3E9E-5945-4C28-8DDB-4FD8AA6E0B3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF0A3E9E-5945-4C28-8DDB-4FD8AA6E0B3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF0A3E9E-5945-4C28-8DDB-4FD8AA6E0B3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF0A3E9E-5945-4C28-8DDB-4FD8AA6E0B3B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{39BC8CEC-414F-4E59-9C46-4E796912C3A1} = {EB9D5FE3-E8BC-4096-AB9F-3D3B46B575F2}
+		{34EB4BD3-C774-434B-8CBB-7DF3A315AA31} = {EB9D5FE3-E8BC-4096-AB9F-3D3B46B575F2}
+		{D9477BFC-7870-4F12-AAEB-B56CF8848A09} = {EB9D5FE3-E8BC-4096-AB9F-3D3B46B575F2}
+		{EF0A3E9E-5945-4C28-8DDB-4FD8AA6E0B3B} = {09F4FA5B-F281-4D47-A2E7-E303CF757134}
+	EndGlobalSection
+EndGlobal
