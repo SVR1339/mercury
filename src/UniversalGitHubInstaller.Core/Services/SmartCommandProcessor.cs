@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using UniversalGitHubInstaller.Core.Models;
+using UniversalGitHubInstaller.Core.Security;
 
 namespace UniversalGitHubInstaller.Core.Services;
 
@@ -80,7 +81,7 @@ public class SmartCommandProcessor
             var cleanUrl = rawUrl.StartsWith("http") || rawUrl.StartsWith("git@")
                 ? _gitService.NormalizeGitUrl(rawUrl)
                 : $"https://github.com/{rawUrl}.git";
-            var repoName = _gitService.ExtractRepoName(cleanUrl);
+            var repoName = SafetyService.SanitizeProjectName(_gitService.ExtractRepoName(cleanUrl));
 
             return new SmartCommandInfo
             {
@@ -136,7 +137,7 @@ public class SmartCommandProcessor
         if (shortMatch.Success && !trimmed.Contains(" ") && !trimmed.Contains("\\"))
         {
             var url = $"https://github.com/{trimmed}.git";
-            var repoName = trimmed.Split('/')[1];
+            var repoName = SafetyService.SanitizeProjectName(trimmed.Split('/')[1]);
             return new SmartCommandInfo
             {
                 RawInput = trimmed,
@@ -154,7 +155,7 @@ public class SmartCommandProcessor
         if (_gitService.IsGitUrl(trimmed) || _gitService.IsGitHubUrl(trimmed))
         {
             var normalized = _gitService.NormalizeGitUrl(trimmed);
-            var repoName = _gitService.ExtractRepoName(normalized);
+            var repoName = SafetyService.SanitizeProjectName(_gitService.ExtractRepoName(normalized));
             return new SmartCommandInfo
             {
                 RawInput = trimmed,

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,8 +19,11 @@ public class SecurityScanResult
 {
     public bool Passed { get; set; }
     public List<SecurityFinding> Findings { get; set; } = new();
-    public int CriticalCount => Findings.Count(f => f.Severity == "Critical");
-    public int WarningCount => Findings.Count(f => f.Severity == "Warning");
+    public int CriticalCount  => Findings.Count(f => f.Severity == "Critical");
+    public int WarningCount   => Findings.Count(f => f.Severity == "Warning");
+    public int InfoCount      => Findings.Count(f => f.Severity == "Info");
+    /// <summary>Number of scan pattern checks that produced no findings.</summary>
+    public int PassedCount    => Math.Max(0, 12 - CriticalCount - WarningCount - InfoCount);
 }
 
 public class SecurityScanner

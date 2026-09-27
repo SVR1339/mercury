@@ -1,5 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+
 
 namespace UniversalGitHubInstaller.Core.Models;
 
@@ -19,6 +21,9 @@ public class ProjectInfo
     public string? BuildSystem { get; set; }
     public string? TestSystem { get; set; }
     public List<string> PossibleRunCommands { get; set; } = new();
+    /// <summary>Returns the first detected run command, or null if none found.</summary>
+    public string? PrimaryRunCommand => PossibleRunCommands.FirstOrDefault();
+
     public List<EnvironmentVariable> EnvironmentVariables { get; set; } = new();
     public string? ReadmeExcerpt { get; set; }
     public DateTime ScannedAt { get; set; } = DateTime.UtcNow;

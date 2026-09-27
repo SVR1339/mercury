@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-cross-platform:
+    name: Build & Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore Dependencies
+        run: dotnet restore UniversalGitHubInstaller.sln
+
+      - name: Build Core, CLI & Tests (Linux / macOS)
+        if: matrix.os != 'windows-latest'
+        run: |
+          dotnet build src/UniversalGitHubInstaller.Core/UniversalGitHubInstaller.Core.csproj -c Release
+          dotnet build src/UniversalGitHubInstaller.Cli/UniversalGitHubInstaller.Cli.csproj -c Release
+          dotnet build tests/UniversalGitHubInstaller.Tests/UniversalGitHubInstaller.Tests.csproj -c Release
+
+      - name: Build Full Solution (Windows)
+        if: matrix.os == 'windows-latest'
+        run: dotnet build UniversalGitHubInstaller.sln -c Release
+
+      - name: Run Unit Tests
+        run: dotnet test tests/UniversalGitHubInstaller.Tests/UniversalGitHubInstaller.Tests.csproj -c Release --no-build --verbosity normal
+
+  build-release-artifacts:
+    name: Build Release Binaries (Windows & Unix)
+    needs: test-cross-platform
+    runs-on: windows-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Publish CLI for Windows (win-x64)
+        run: |
+          dotnet publish src/UniversalGitHubInstaller.Cli/UniversalGitHubInstaller.Cli.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o publish/win-x64
+
+      - name: Publish CLI for macOS (osx-x64 & osx-arm64)
+        run: |
+          dotnet publish src/UniversalGitHubInstaller.Cli/UniversalGitHubInstaller.Cli.csproj -c Release -r osx-x64 --self-contained true -p:PublishSingleFile=true -o publish/osx-x64
+          dotnet publish src/UniversalGitHubInstaller.Cli/UniversalGitHubInstaller.Cli.csproj -c Release -r osx-arm64 --self-contained true -p:PublishSingleFile=true -o publish/osx-arm64
+
+      - name: Publish CLI for Linux (linux-x64 & linux-arm64)
+        run: |
+          dotnet publish src/UniversalGitHubInstaller.Cli/UniversalGitHubInstaller.Cli.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -o publish/linux-x64
+          dotnet publish src/UniversalGitHubInstaller.Cli/UniversalGitHubInstaller.Cli.csproj -c Release -r linux-arm64 --self-contained true -p:PublishSingleFile=true -o publish/linux-arm64
+
+      - name: Publish GUI for Windows (win-x64)
+        run: |
+          dotnet publish src/UniversalGitHubInstaller/UniversalGitHubInstaller.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=false -o publish/gui

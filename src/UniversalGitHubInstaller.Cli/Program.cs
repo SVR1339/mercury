@@ -20,6 +20,7 @@ class Program
     static async Task<int> Main(string[] args)
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
+        Console.InputEncoding  = System.Text.Encoding.UTF8;
 
         if (args.Length == 0)
         {
@@ -192,10 +193,18 @@ class Program
         var gitService = new GitService();
         if (gitService.IsGitUrl(path))
         {
-            var repoName = gitService.ExtractRepoName(path);
-            var targetDir = Path.Combine(
+            var rawRepoName = gitService.ExtractRepoName(path);
+            var repoName = SafetyService.SanitizeProjectName(rawRepoName);
+            var baseProjectsDir = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "Mercury", "projects", repoName);
+                "Mercury", "projects");
+            var targetDir = Path.Combine(baseProjectsDir, repoName);
+
+            if (!SafetyService.IsPathWithinDirectory(targetDir, baseProjectsDir))
+            {
+                PrintError($"Path traversal attempt blocked for repository: {rawRepoName}");
+                return 1;
+            }
 
             Console.WriteLine($"\nCloning {path}...");
             var cloneResult = await gitService.CloneAsync(path, targetDir);
@@ -228,7 +237,7 @@ class Program
 
         // Display results
         Console.ForegroundColor = ConsoleColor.White;
-        Console.WriteLine("\n  â•â•â• PROJECT ANALYSIS â•â•â•\n");
+        Console.WriteLine("\n  ─── PROJECT ANALYSIS ───\n");
         Console.ResetColor();
 
         Console.WriteLine($"  Project:     {info.Name}");
@@ -243,11 +252,11 @@ class Program
         foreach (var tech in info.Technologies)
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write("  âœ“ ");
+            Console.Write("  ✓ ");
             Console.ResetColor();
             Console.Write(tech.Name);
             if (tech.Framework != null) Console.Write($" ({tech.Framework})");
-            if (tech.Version != null) Console.Write($" â€” {tech.Version}");
+            if (tech.Version != null) Console.Write($" — {tech.Version}");
             Console.WriteLine();
         }
 
@@ -271,7 +280,7 @@ class Program
             Console.ResetColor();
             foreach (var svc in info.Services)
             {
-                Console.WriteLine($"    {svc.Name} ({svc.Type}){(svc.Port.HasValue ? $" â€” Port {svc.Port}" : "")}");
+                Console.WriteLine($"    {svc.Name} ({svc.Type}){(svc.Port.HasValue ? $" — Port {svc.Port}" : "")}");
             }
         }
 
@@ -301,7 +310,7 @@ class Program
 
         // Security scan
         Console.ForegroundColor = ConsoleColor.White;
-        Console.WriteLine("  â•â•â• SECURITY SCAN â•â•â•\n");
+        Console.WriteLine("  ─── SECURITY SCAN ───\n");
         Console.ResetColor();
 
         var secScanner = new SecurityScanner();
@@ -310,20 +319,20 @@ class Program
         if (secResult.Passed)
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("  âœ“ Security scan passed (no critical issues)");
+            Console.WriteLine("  ✓ Security scan passed (no critical issues)");
             Console.ResetColor();
         }
         else
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"  âœ— {secResult.CriticalCount} critical issue(s) found");
+            Console.WriteLine($"  ✗ {secResult.CriticalCount} critical issue(s) found");
             Console.ResetColor();
         }
 
         if (secResult.WarningCount > 0)
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"  âš  {secResult.WarningCount} warning(s)");
+            Console.WriteLine($"  ⚠ {secResult.WarningCount} warning(s)");
             Console.ResetColor();
         }
 
@@ -333,7 +342,7 @@ class Program
             Console.ForegroundColor = color;
             Console.Write($"    [{finding.Severity}] ");
             Console.ResetColor();
-            Console.WriteLine($"{finding.File}:{finding.Line} â€” {finding.Description}");
+            Console.WriteLine($"{finding.File}:{finding.Line} — {finding.Description}");
         }
 
         Console.WriteLine();
@@ -343,7 +352,7 @@ class Program
         var profile = profileService.CreateProfile(info);
         profileService.SaveProfile(profile, path);
         Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine("  âœ“ Project profile saved to .project-installer/project.json");
+        Console.WriteLine("  ✓ Project profile saved to .project-installer/project.json");
         Console.ResetColor();
         Console.WriteLine();
 
@@ -397,7 +406,7 @@ class Program
             if (result.Success)
             {
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"  âœ“ {pm.Name} complete ({result.Duration.TotalSeconds:F1}s)");
+                Console.WriteLine($"  ✓ {pm.Name} complete ({result.Duration.TotalSeconds:F1}s)");
                 Console.ResetColor();
             }
             else
@@ -410,7 +419,7 @@ class Program
         }
 
         Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine("\n  âœ“ All dependencies installed successfully.\n");
+        Console.WriteLine("\n  ✓ All dependencies installed successfully.\n");
         Console.ResetColor();
         return 0;
     }
@@ -435,7 +444,7 @@ class Program
         if (hasChanges)
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("  âš  Local uncommitted changes detected.");
+            Console.WriteLine("  ⚠ Local uncommitted changes detected.");
             Console.ResetColor();
             Console.Write("  Pull anyway? (y/N) ");
             var answer = Console.ReadLine()?.Trim().ToLowerInvariant();
@@ -450,7 +459,7 @@ class Program
         if (result.Success)
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("  âœ“ Updated successfully.");
+            Console.WriteLine("  ✓ Updated successfully.");
             Console.ResetColor();
 
             // Re-install dependencies
@@ -494,7 +503,7 @@ class Program
     {
         PrintBanner();
         Console.ForegroundColor = ConsoleColor.White;
-        Console.WriteLine("\n  â•â•â• SYSTEM DIAGNOSTICS â•â•â•\n");
+        Console.WriteLine("\n  ─── SYSTEM DIAGNOSTICS ───\n");
         Console.ResetColor();
 
         var envScanner = new WindowsEnvironmentScanner();
@@ -511,13 +520,13 @@ class Program
         Console.WriteLine($"  Scoop:          {(info.HasScoop ? "Available" : "Not found")}");
 
         Console.ForegroundColor = ConsoleColor.White;
-        Console.WriteLine("\n  â•â•â• RUNTIMES â•â•â•\n");
+        Console.WriteLine("\n  ─── RUNTIMES ───\n");
         Console.ResetColor();
 
         foreach (var (name, rt) in info.Runtimes.OrderBy(x => x.Key))
         {
             Console.ForegroundColor = rt.Installed ? ConsoleColor.Green : ConsoleColor.DarkGray;
-            Console.Write(rt.Installed ? "  âœ“ " : "  âœ— ");
+            Console.Write(rt.Installed ? "  ✓ " : "  ✗ ");
             Console.ResetColor();
             Console.Write($"{name,-20}");
             Console.ForegroundColor = rt.Installed ? ConsoleColor.White : ConsoleColor.DarkGray;
@@ -532,7 +541,7 @@ class Program
     static void PrintError(string message)
     {
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine($"\n  âœ— {message}");
+        Console.WriteLine($"\n  ✗ {message}");
         Console.ResetColor();
         Logger.Error(message);
     }

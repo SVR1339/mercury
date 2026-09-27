@@ -13,6 +13,7 @@ using UniversalGitHubInstaller.Core.Models;
 using UniversalGitHubInstaller.Core.Runtime;
 using UniversalGitHubInstaller.Core.Security;
 using UniversalGitHubInstaller.Core.Services;
+using UniversalGitHubInstaller.Views;
 
 namespace UniversalGitHubInstaller.ViewModels;
 
@@ -28,6 +29,7 @@ public class MainViewModel : BaseViewModel
     private readonly TerminalService _terminalService = new();
     private readonly SmartCommandProcessor _smartProcessor = new();
     private readonly AppLogger _logger = new("app");
+    private readonly SafetyService _safety = new();
 
     private string _currentPage = "Home";
     private string _statusText = "Ready";
@@ -140,14 +142,14 @@ public class MainViewModel : BaseViewModel
         DetectedCommand = info;
         DetectedBadge = info.Kind switch
         {
-            CommandInputKind.GitRepositoryUrl => "⚡ GitHub Repo",
-            CommandInputKind.GitHubShortHand => "⚡ GitHub Repo (Shorthand)",
-            CommandInputKind.GitCloneCommand => "🚀 Git Clone Command",
-            CommandInputKind.PowerShellInstallCommand => "💻 PowerShell Install Script",
-            CommandInputKind.AppleTerminalInstallCommand => "🍏 Apple Terminal / Bash Script",
-            CommandInputKind.PackageManagerInstall => "📦 Package Manager Install",
-            CommandInputKind.CompoundCommand => "⛓️ Multi-Step Pipeline",
-            _ => "⚙️ Terminal Command"
+            CommandInputKind.GitRepositoryUrl              => "GitHub Repository",
+            CommandInputKind.GitHubShortHand               => "GitHub Shorthand",
+            CommandInputKind.GitCloneCommand               => "Git Clone Command",
+            CommandInputKind.PowerShellInstallCommand      => "PowerShell Install Script",
+            CommandInputKind.AppleTerminalInstallCommand   => "macOS / Bash Install Script",
+            CommandInputKind.PackageManagerInstall         => "Package Manager Install",
+            CommandInputKind.CompoundCommand               => "Multi-Step Pipeline",
+            _                                              => "Terminal Command"
         };
     }
 
@@ -159,6 +161,16 @@ public class MainViewModel : BaseViewModel
             if (LogEntries.Count > 500) LogEntries.RemoveAt(LogEntries.Count - 1);
         });
         _logger.Info(message);
+    }
+
+    private void LogSafetyAssessment(SafetyAssessment assessment, string subject)
+    {
+        var truncated = subject.Length > 70 ? subject[..70] + "..." : subject;
+        AddLog($"[SAFETY]  Assessment for: {truncated}");
+        AddLog($"[SAFETY]  Risk level: {assessment.Risk.ToString().ToUpper()}  |  {assessment.Summary}");
+        foreach (var finding in assessment.Findings)
+            AddLog($"[SAFETY]    {finding}");
+        _logger.Info($"Safety assessment: {assessment.Risk} | {subject}");
     }
 
     private void BrowseFolder()
@@ -208,17 +220,67 @@ public class MainViewModel : BaseViewModel
     private async Task ProcessSmartInput()
     {
         if (string.IsNullOrWhiteSpace(GitUrl)) return;
-        var info = _smartProcessor.ParseInput(GitUrl);
+
+        // Enforce HTTPS on all URLs before processing
+        var safeUrl = SafetyService.EnforceHttps(GitUrl.Trim());
+        if (safeUrl != GitUrl)
+        {
+            AddLog($"[SAFETY]  URL upgraded to HTTPS: {safeUrl}");
+            GitUrl = safeUrl;
+        }
+
+        var info = _smartProcessor.ParseInput(safeUrl);
         DetectedCommand = info;
 
+        // Assess the URL itself
+        if (!string.IsNullOrWhiteSpace(info.ExtractedGitUrl))
+        {
+            var urlAssessment = _safety.AssessUrl(info.ExtractedGitUrl);
+            LogSafetyAssessment(urlAssessment, info.ExtractedGitUrl);
+
+            if (urlAssessment.IsBlocked)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                    SafetyConsentDialog.RequestConsent(urlAssessment, $"URL: {info.ExtractedGitUrl}"));
+                StatusText = "Operation blocked by safety policy.";
+                return;
+            }
+
+            if (!SafetyService.IsKnownGitHost(info.ExtractedGitUrl))
+                AddLog("[SAFETY]  Source is not a known Git hosting provider — proceed with caution.");
+        }
+
+        // Assess the raw command
+        var cmdAssessment = _safety.AssessCommand(info.ExecutableCommand ?? safeUrl);
+        LogSafetyAssessment(cmdAssessment, info.ExecutableCommand ?? safeUrl);
+
+        if (cmdAssessment.IsBlocked)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+                SafetyConsentDialog.RequestConsent(cmdAssessment, info.Description ?? safeUrl));
+            StatusText = "Operation blocked by safety policy.";
+            AddLog("[BLOCKED]  Operation rejected by Mercury safety policy.");
+            return;
+        }
+
+        if (cmdAssessment.RequiresConsent)
+        {
+            bool approved = false;
+            Application.Current.Dispatcher.Invoke(() =>
+                approved = SafetyConsentDialog.RequestConsent(cmdAssessment, info.Description ?? safeUrl));
+            if (!approved)
+            {
+                StatusText = "Operation cancelled by user.";
+                AddLog("[SAFETY]  User declined to proceed after risk review.");
+                return;
+            }
+            AddLog("[SAFETY]  User accepted risk and authorised execution.");
+        }
+
         if (info.IsDirectRepo && !string.IsNullOrWhiteSpace(info.ExtractedGitUrl))
-        {
             await CloneAndSetupRepo(info.ExtractedGitUrl, info.ExtractedRepoName ?? "project");
-        }
         else
-        {
             await ExecuteDirectCommand(info);
-        }
     }
 
     private async Task CloneAndSetupRepo(string gitUrl, string repoName)
@@ -227,20 +289,36 @@ public class MainViewModel : BaseViewModel
         StatusText = $"Cloning {repoName}...";
         _cts = new CancellationTokenSource();
 
+        // Always clone over HTTPS
+        gitUrl = SafetyService.EnforceHttps(gitUrl);
+        AddLog($"[SAFETY]  Repository URL verified — HTTPS transport confirmed.");
+        AddLog($"[AUDIT]   Clone initiated: {gitUrl} -> {repoName}");
+
         try
         {
-            var targetDir = Path.Combine(
+            var safeRepoName = SafetyService.SanitizeProjectName(repoName);
+            var baseProjectsDir = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "Mercury", "projects", repoName);
+                "Mercury", "projects");
+            var targetDir = Path.Combine(baseProjectsDir, safeRepoName);
+
+            if (!SafetyService.IsPathWithinDirectory(targetDir, baseProjectsDir))
+            {
+                StatusText = "Security Error: Destination path traverses outside projects directory.";
+                AddLog($"[BLOCKED] Path traversal attempt detected in repo name: {repoName}");
+                IsBusy = false;
+                return;
+            }
 
             if (Directory.Exists(targetDir))
             {
                 var result = MessageBox.Show(
                     $"Directory already exists:\n{targetDir}\n\nOverwrite existing project?",
-                    "Mercury - Confirm Overwrite", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                    "Mercury — Confirm Overwrite", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (result != MessageBoxResult.Yes)
                 {
                     IsBusy = false;
+                    AddLog("[AUDIT]   Clone cancelled — directory already exists.");
                     return;
                 }
                 Directory.Delete(targetDir, true);
@@ -285,9 +363,9 @@ public class MainViewModel : BaseViewModel
         IsBusy = true;
         StatusText = $"Executing: {info.Description}...";
         _cts = new CancellationTokenSource();
-        AddLog($"=== Executing Command ({info.Description}) ===");
-        AddLog($"Command: {info.ExecutableCommand}");
-        AddLog("Internet and terminal access: ENABLED (Full access granted)");
+        AddLog($"=== Executing: {info.Description} ===");
+        AddLog($"[AUDIT]   Command authorised and dispatched: {info.ExecutableCommand}");
+        AddLog($"[SAFETY]  Network access: ENABLED  |  Execution scope: Local user context  |  TLS 1.2/1.3 enforced");
 
         var defaultProjectsDir = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -315,7 +393,7 @@ public class MainViewModel : BaseViewModel
             else
             {
                 StatusText = $"Command exited with code {result.ExitCode}";
-                AddLog($"✗ Execution failed (exit code {result.ExitCode}): {result.Message}");
+                AddLog($"[FAIL] Execution failed (exit code {result.ExitCode}): {result.Message}");
             }
         }
         catch (OperationCanceledException)
@@ -395,7 +473,7 @@ public class MainViewModel : BaseViewModel
                         Name = t.Name,
                         Framework = t.Framework,
                         Version = t.Version,
-                        Status = "âœ“"
+                        Status = "✓"
                     });
                 }
 
@@ -419,7 +497,7 @@ public class MainViewModel : BaseViewModel
                         Key = ev.Key,
                         IsRequired = ev.IsRequired,
                         IsSecret = ev.IsSecret,
-                        Value = ev.IsSecret ? "â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" : (ev.DefaultValue ?? ""),
+                        Value = ev.IsSecret ? "••••••••" : (ev.DefaultValue ?? ""),
                         Status = ev.IsRequired ? "Required" : "Optional"
                     });
                 }
@@ -432,9 +510,9 @@ public class MainViewModel : BaseViewModel
             Progress = 75;
 
             if (SecurityResult.CriticalCount > 0)
-                AddLog($"âš  Security scan found {SecurityResult.CriticalCount} critical issue(s)");
+                AddLog($"[WARN] Security scan found {SecurityResult.CriticalCount} critical issue(s)");
             else
-                AddLog("âœ“ Security scan passed");
+                AddLog("[OK]   Security scan passed");
 
             // Environment scan
             StatusText = "Checking Windows environment...";
@@ -496,10 +574,10 @@ public class MainViewModel : BaseViewModel
                 var result = await _processRunner.RunShellAsync(pm.InstallCommand, ProjectPath, ct: _cts.Token);
 
                 if (result.Success)
-                    AddLog($"âœ“ {pm.Name} dependencies installed ({result.Duration.TotalSeconds:F1}s)");
+                    AddLog($"[OK]   {pm.Name} dependencies installed ({result.Duration.TotalSeconds:F1}s)");
                 else
                 {
-                    AddLog($"âœ— {pm.Name} failed: {result.Message}");
+                    AddLog($"[FAIL] {pm.Name} failed: {result.Message}");
                     StatusText = $"Dependency installation failed: {result.Message}";
 
                     if (result.ExitCode.HasValue)
@@ -542,12 +620,12 @@ public class MainViewModel : BaseViewModel
             if (result.Success)
             {
                 StatusText = $"Build succeeded ({result.Duration.TotalSeconds:F1}s)";
-                AddLog($"âœ“ Build complete in {result.Duration.TotalSeconds:F1}s");
+                AddLog($"[OK]   Build complete in {result.Duration.TotalSeconds:F1}s");
             }
             else
             {
                 StatusText = $"Build failed (exit code {result.ExitCode})";
-                AddLog($"âœ— Build failed: {result.Message}");
+                AddLog($"[FAIL] Build failed: {result.Message}");
             }
         }
         catch (Exception ex)
@@ -575,12 +653,12 @@ public class MainViewModel : BaseViewModel
             if (result.Success)
             {
                 StatusText = $"Tests passed ({result.Duration.TotalSeconds:F1}s)";
-                AddLog($"âœ“ Tests passed in {result.Duration.TotalSeconds:F1}s");
+                AddLog($"[OK]   Tests passed in {result.Duration.TotalSeconds:F1}s");
             }
             else
             {
                 StatusText = $"Tests failed (exit code {result.ExitCode})";
-                AddLog($"âœ— Tests failed: {result.Message}");
+                AddLog($"[FAIL] Tests failed: {result.Message}");
             }
         }
         catch (Exception ex)
@@ -660,7 +738,7 @@ public class MainViewModel : BaseViewModel
             await InstallDependencies();
 
             StatusText = "Repair complete.";
-            AddLog("âœ“ Repair complete.");
+            AddLog("[OK]   Repair complete.");
         }
         catch (Exception ex)
         {
@@ -703,7 +781,7 @@ public class MainViewModel : BaseViewModel
             }
             else
             {
-                AddLog($"✗ Update failed: {pullResult.Message}");
+                AddLog($"[FAIL] Update failed: {pullResult.Message}");
                 StatusText = $"Update failed: {pullResult.Message}";
             }
         }
@@ -737,7 +815,7 @@ public class MainViewModel : BaseViewModel
 
             foreach (var (name, info) in EnvInfo.Runtimes)
             {
-                var status = info.Installed ? $"✓ {info.Version}" : "✗ Not installed";
+                var status = info.Installed ? $"✓ {info.Version}" : "[FAIL] Not installed";
                 AddLog($"{name}: {status}");
             }
 

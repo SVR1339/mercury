@@ -2,198 +2,387 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:UniversalGitHubInstaller.ViewModels"
-        Title="Mercury - Universal GitHub &amp; Terminal Installer"
-        Width="1100" Height="780" MinWidth="900" MinHeight="600"
+        Title="Mercury  Universal GitHub and Terminal Installer"
+        Width="1180" Height="800" MinWidth="960" MinHeight="640"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource PrimaryBgBrush}"
+        FontFamily="Segoe UI"
         AllowDrop="True" Drop="Window_Drop" DragOver="Window_DragOver">
-
     <Window.DataContext>
         <vm:MainViewModel/>
     </Window.DataContext>
-
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="230"/>
+            <ColumnDefinition Width="240"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-
-        <!-- Left Navigation -->
+        <!-- SIDEBAR -->
         <Border Grid.Column="0" Background="{StaticResource SecondaryBgBrush}"
                 BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,1,0">
             <DockPanel>
-                <!-- App Header -->
-                <StackPanel DockPanel.Dock="Top" Margin="16,20,16,24">
-                    <Border CornerRadius="10" Width="44" Height="44" HorizontalAlignment="Left" Margin="0,0,0,10"
-                            Background="#111827" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
-                        <Image Source="/assets/icon.png" Width="36" Height="36" RenderOptions.BitmapScalingMode="HighQuality"/>
-                    </Border>
-                    <TextBlock Text="Mercury" FontSize="20" FontWeight="Bold"
-                               Foreground="{StaticResource TextPrimaryBrush}"/>
-                    <TextBlock Text="GitHub &amp; Terminal Installer" FontSize="11" FontWeight="SemiBold"
-                               Foreground="{StaticResource AccentBrush}"/>
-                    <TextBlock Text="v1.0.0 • Windows &amp; Apple" FontSize="10" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,0,0"/>
+                <StackPanel DockPanel.Dock="Bottom" Margin="20,0,20,16">
+                    <Separator/>
+                    <TextBlock Text="Mercury  v1.0.0" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock Text="Windows and macOS Compatible" FontSize="10" Foreground="{StaticResource TextMutedBrush}" Margin="0,2,0,0"/>
                 </StackPanel>
-
-                <!-- Version Info at Bottom -->
-                <TextBlock DockPanel.Dock="Bottom" Text="© 2026 Mercury"
-                           FontSize="10" Foreground="{StaticResource TextSecondaryBrush}"
-                           Margin="16,0,0,12"/>
-
-                <!-- Nav Items -->
+                <StackPanel DockPanel.Dock="Top" Margin="20,24,20,20">
+                    <Border Width="42" Height="42" HorizontalAlignment="Left" CornerRadius="10" Margin="0,0,0,14"
+                            Background="#0A1628" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                        <Image Source="/assets/icon.png" Width="34" Height="34"
+                               RenderOptions.BitmapScalingMode="HighQuality"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <TextBlock Text="Mercury" FontSize="20" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                    <TextBlock Text="GitHub and Terminal Installer" FontSize="11" FontWeight="SemiBold"
+                               Foreground="{StaticResource AccentBrush}" Margin="0,2,0,0"/>
+                </StackPanel>
                 <StackPanel Margin="8,0">
-                    <RadioButton x:Name="NavHome" Content="Home" Tag="🏠"
-                                 Style="{StaticResource NavButton}" IsChecked="True"
-                                 Checked="Nav_Checked"/>
-                    <RadioButton x:Name="NavProject" Content="Project" Tag="📦"
-                                 Style="{StaticResource NavButton}"
-                                 Checked="Nav_Checked"
+                    <TextBlock Text="WORKSPACE" FontSize="10" FontWeight="Bold"
+                               Foreground="{StaticResource TextMutedBrush}" Margin="18,0,0,6"/>
+                    <RadioButton x:Name="NavHome" Content="Home"
+                                 Style="{StaticResource NavButton}" IsChecked="True" Checked="Nav_Checked"/>
+                    <RadioButton x:Name="NavProject" Content="Project Analysis"
+                                 Style="{StaticResource NavButton}" Checked="Nav_Checked"
                                  IsEnabled="{Binding HasProject}"/>
-                    <RadioButton x:Name="NavEnvironment" Content="Environment" Tag="🖥️"
-                                 Style="{StaticResource NavButton}"
-                                 Checked="Nav_Checked"/>
-                    <RadioButton x:Name="NavSecurity" Content="Security" Tag="🔒"
-                                 Style="{StaticResource NavButton}"
-                                 Checked="Nav_Checked"
+                    <RadioButton x:Name="NavEnvironment" Content="Environment"
+                                 Style="{StaticResource NavButton}" Checked="Nav_Checked"/>
+                    <RadioButton x:Name="NavSecurity" Content="Security Scan"
+                                 Style="{StaticResource NavButton}" Checked="Nav_Checked"
                                  IsEnabled="{Binding HasProject}"/>
-                    <RadioButton x:Name="NavBuild" Content="Build &amp; Run" Tag="▶"
-                                 Style="{StaticResource NavButton}"
-                                 Checked="Nav_Checked"
+                    <RadioButton x:Name="NavBuild" Content="Build and Run"
+                                 Style="{StaticResource NavButton}" Checked="Nav_Checked"
                                  IsEnabled="{Binding HasProject}"/>
-                    <RadioButton x:Name="NavLogs" Content="Activity Log" Tag="📋"
-                                 Style="{StaticResource NavButton}"
-                                 Checked="Nav_Checked"/>
-                    <RadioButton x:Name="NavDiagnostics" Content="Diagnostics" Tag="🔧"
-                                 Style="{StaticResource NavButton}"
-                                 Checked="Nav_Checked"/>
-                    <Separator Margin="12,8" Background="{StaticResource BorderBrush}"/>
-                    <RadioButton x:Name="NavSettings" Content="Settings" Tag="⚙"
-                                 Style="{StaticResource NavButton}"
-                                 Checked="Nav_Checked"/>
+                    <Separator Margin="12,10"/>
+                    <TextBlock Text="SYSTEM" FontSize="10" FontWeight="Bold"
+                               Foreground="{StaticResource TextMutedBrush}" Margin="18,0,0,6"/>
+                    <RadioButton x:Name="NavLogs" Content="Activity Log"
+                                 Style="{StaticResource NavButton}" Checked="Nav_Checked"/>
+                    <RadioButton x:Name="NavDiagnostics" Content="Diagnostics"
+                                 Style="{StaticResource NavButton}" Checked="Nav_Checked"/>
+                    <RadioButton x:Name="NavSettings" Content="Settings"
+                                 Style="{StaticResource NavButton}" Checked="Nav_Checked"/>
                 </StackPanel>
             </DockPanel>
         </Border>
-
-        <!-- Main Content Area -->
+        <!-- MAIN CONTENT -->
         <DockPanel Grid.Column="1">
-            <!-- Status Bar -->
+            <!-- STATUS BAR -->
             <Border DockPanel.Dock="Bottom" Background="{StaticResource SecondaryBgBrush}"
-                    Padding="16,8" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0">
+                    Padding="20,8" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0">
                 <DockPanel>
                     <TextBlock DockPanel.Dock="Right" Text="{Binding ProjectPath}"
-                               Foreground="{StaticResource TextSecondaryBrush}" FontSize="11"
-                               MaxWidth="400" TextTrimming="CharacterEllipsis"/>
-                    <ProgressBar DockPanel.Dock="Right" Width="120" Height="4" Margin="12,0"
+                               Foreground="{StaticResource TextMutedBrush}" FontSize="11"
+                               MaxWidth="380" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+                    <ProgressBar DockPanel.Dock="Right" Width="130" Height="4" Margin="14,0"
                                  Value="{Binding Progress}" Maximum="100"
                                  Foreground="{StaticResource AccentBrush}"
-                                 Background="{StaticResource CardBgBrush}"
-                                 Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"/>
+                                 Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"
+                                 VerticalAlignment="Center"/>
+                    <Ellipse DockPanel.Dock="Left" Width="7" Height="7" Margin="0,0,8,0" VerticalAlignment="Center">
+                        <Ellipse.Fill><SolidColorBrush Color="#10B981"/></Ellipse.Fill>
+                    </Ellipse>
                     <TextBlock Text="{Binding StatusText}"
-                               Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"/>
+                               Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" VerticalAlignment="Center"/>
                 </DockPanel>
             </Border>
-
-            <!-- Page Content -->
-            <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="24,20">
+            <!-- PAGE CONTENT -->
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="30,26">
                 <Grid>
                     <!-- HOME PAGE -->
                     <StackPanel x:Name="PageHome" Visibility="Visible">
-                        <TextBlock Text="Welcome to ☿ Mercury" FontSize="26" FontWeight="Bold"
-                                   Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,6"/>
-                        <TextBlock Text="Install any GitHub repository or execute installation commands across Windows &amp; Apple terminals with full internet access."
-                                   Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,20"/>
-
-                        <!-- Universal Command & GitHub URL Input Card -->
+                        <TextBlock Text="Universal GitHub Installer" FontSize="26" FontWeight="Bold"
+                                   Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,4"/>
+                        <TextBlock Text="Install any GitHub repository, execute PowerShell scripts, or run terminal commands across Windows and macOS from a single interface."
+                                   Foreground="{StaticResource TextSecondaryBrush}" FontSize="13"
+                                   TextWrapping="Wrap" Margin="0,0,0,28"/>
+                        <!-- SMART INSTALLER CARD -->
                         <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16">
                             <StackPanel>
-                                <DockPanel Margin="0,0,0,8">
-                                    <TextBlock Text="⚡ Universal Install &amp; Command Processor" FontSize="14" FontWeight="SemiBold"
-                                               Foreground="{StaticResource TextPrimaryBrush}"/>
-                                    <Border Background="#0284c7" CornerRadius="4" Padding="8,3" HorizontalAlignment="Right"
+                                <DockPanel Margin="0,0,0,14">
+                                    <StackPanel DockPanel.Dock="Left">
+                                        <TextBlock Text="Smart Installer" FontSize="15" FontWeight="SemiBold"
+                                                   Foreground="{StaticResource TextPrimaryBrush}"/>
+                                        <TextBlock Text="GitHub URL, git clone command, PowerShell one-liner, or macOS bash script"
+                                                   FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                    <Border Background="#0C2340" CornerRadius="5" Padding="10,4"
+                                            HorizontalAlignment="Right" VerticalAlignment="Top"
                                             Visibility="{Binding DetectedBadge, Converter={StaticResource StringNotEmptyToVis}}">
-                                        <TextBlock Text="{Binding DetectedBadge}" Foreground="White" FontSize="11" FontWeight="Bold"/>
+                                        <TextBlock Text="{Binding DetectedBadge}"
+                                                   Foreground="{StaticResource AccentBrush}" FontSize="11" FontWeight="SemiBold"/>
                                     </Border>
                                 </DockPanel>
-
-                                <DockPanel Margin="0,4,0,8">
-                                    <Button DockPanel.Dock="Right" Content="⚡ Smart Install &amp; Run"
+                                <DockPanel>
+                                    <Button DockPanel.Dock="Right" Content="Execute"
                                             Style="{StaticResource PrimaryButton}"
-                                            Command="{Binding SmartInstallCommand}" Margin="10,0,0,0"/>
+                                            Command="{Binding SmartInstallCommand}"
+                                            Margin="10,0,0,0" MinWidth="110"
+                                            ToolTip="Detect input type and execute the appropriate install or clone operation"/>
                                     <TextBox Text="{Binding GitUrl, UpdateSourceTrigger=PropertyChanged}"
-                                             VerticalContentAlignment="Center" FontSize="13" Padding="8,6"
-                                             Background="{StaticResource SecondaryBgBrush}"
-                                             Foreground="{StaticResource TextPrimaryBrush}"
-                                             BorderBrush="{StaticResource BorderBrush}"/>
+                                             Height="40" VerticalContentAlignment="Center"
+                                             FontSize="13" Padding="12,0"/>
                                 </DockPanel>
-
-                                <TextBlock Text="Paste ANY GitHub URL (https://github.com/user/project, user/project), git clone command, PowerShell one-liner (irm ... | iex), or Apple Terminal command (curl ... | bash)"
-                                           FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap"/>
+                                <TextBlock Margin="0,10,0,0" FontSize="11" Foreground="{StaticResource TextMutedBrush}"
+                                           TextWrapping="Wrap"
+                                           Text="Accepts:  GitHub URLs  |  user/repo shorthand  |  git clone commands  |  PowerShell install scripts (irm ... | iex)  |  bash/curl install scripts"/>
                             </StackPanel>
                         </Border>
-
-                        <!-- Direct Terminal & Shell Access Card -->
+                        <!-- TERMINAL ACCESS CARD -->
                         <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16">
                             <StackPanel>
-                                <DockPanel Margin="0,0,0,8">
-                                    <TextBlock Text="💻 Direct Terminal &amp; Shell Access" FontSize="14" FontWeight="SemiBold"
+                                <DockPanel Margin="0,0,0,12">
+                                    <TextBlock Text="Terminal Access" FontSize="15" FontWeight="SemiBold"
                                                Foreground="{StaticResource TextPrimaryBrush}"/>
-                                    <TextBlock Text="Full Internet &amp; Admin Access" FontSize="11"
-                                               Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Right"/>
+                                    <TextBlock Text="ExecutionPolicy Bypass  |  TLS 1.2/1.3  |  Full Network Access"
+                                               FontSize="11" Foreground="{StaticResource AccentBrush}"
+                                               HorizontalAlignment="Right" VerticalAlignment="Center"/>
                                 </DockPanel>
-                                <TextBlock Text="Direct access to system terminals with execution policy bypass and TLS 1.2/1.3 enabled:"
-                                           FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,10"/>
                                 <WrapPanel>
-                                    <Button Content="💻 Open PowerShell" Style="{StaticResource SecondaryButton}"
-                                            Command="{Binding OpenPowerShellCommand}" Margin="0,0,10,6"
-                                            ToolTip="Opens PowerShell with ExecutionPolicy Bypass &amp; TLS 1.2/1.3"/>
-                                    <Button Content="🖥️ Open CMD" Style="{StaticResource SecondaryButton}"
-                                            Command="{Binding OpenCmdCommand}" Margin="0,0,10,6"
-                                            ToolTip="Opens Windows Command Prompt"/>
-                                    <Button Content="🍏 Open Terminal / Unix Shell" Style="{StaticResource SecondaryButton}"
-                                            Command="{Binding OpenAppleTerminalCommand}" Margin="0,0,10,6"
-                                            ToolTip="Opens Apple Terminal (macOS) or Unix terminal"/>
-                                    <Button Content="📁 Open Projects Folder" Style="{StaticResource SecondaryButton}"
-                                            Command="{Binding OpenProjectFolderCommand}" Margin="0,0,10,6"
-                                            ToolTip="Opens Mercury projects storage directory"/>
+                                    <Button Content="Open PowerShell" Style="{StaticResource SecondaryButton}"
+                                            Command="{Binding OpenPowerShellCommand}" Margin="0,0,10,8"
+                                            ToolTip="PowerShell with ExecutionPolicy Bypass and TLS 1.2/1.3"/>
+                                    <Button Content="Open Command Prompt" Style="{StaticResource SecondaryButton}"
+                                            Command="{Binding OpenCmdCommand}" Margin="0,0,10,8"
+                                            ToolTip="Windows Command Prompt in project directory"/>
+                                    <Button Content="Open macOS Terminal" Style="{StaticResource SecondaryButton}"
+                                            Command="{Binding OpenAppleTerminalCommand}" Margin="0,0,10,8"
+                                            ToolTip="macOS Terminal or default Unix shell"/>
+                                    <Button Content="Open Projects Folder" Style="{StaticResource SecondaryButton}"
+                                            Command="{Binding OpenProjectFolderCommand}" Margin="0,0,10,8"
+                                            ToolTip="Mercury projects directory in Explorer"/>
                                 </WrapPanel>
                             </StackPanel>
                         </Border>
-
-                        <!-- Drop Zone -->
-                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16" MinHeight="110"
-                                Background="{StaticResource SecondaryBgBrush}"
-                                BorderThickness="2"
+                        <!-- DROP ZONE -->
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16"
+                                MinHeight="120" BorderThickness="2"
                                 AllowDrop="True" Drop="Window_Drop" DragOver="Window_DragOver">
-                            <Border.BorderBrush>
-                                <SolidColorBrush Color="#475569"/>
-                            </Border.BorderBrush>
+                            <Border.BorderBrush><SolidColorBrush Color="#1E3A5F"/></Border.BorderBrush>
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <TextBlock Text="📁" FontSize="30" HorizontalAlignment="Center" Margin="0,0,0,4"/>
-                                <TextBlock Text="Drop GitHub Project, Folder, ZIP, or Text Here"
-                                           FontSize="14" FontWeight="SemiBold"
-                                           Foreground="{StaticResource TextPrimaryBrush}"
-                                           HorizontalAlignment="Center"/>
-                                <TextBlock Text="Drag and drop any folder, ZIP archive, or copied command directly"
-                                           FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"
-                                           HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                <TextBlock Text="Drop Zone" FontSize="15" FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextSecondaryBrush}" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Drag and drop a project folder, ZIP archive, or copied install command"
+                                           FontSize="12" Foreground="{StaticResource TextMutedBrush}"
+                                           HorizontalAlignment="Center" Margin="0,4,0,0"/>
                             </StackPanel>
                         </Border>
-
-                        <!-- Action Buttons -->
-                        <WrapPanel Margin="0,0,0,16">
-                            <Button Content="📁 Browse Folder" Style="{StaticResource PrimaryButton}"
-                                    Command="{Binding BrowseFolderCommand}" Margin="0,0,12,8"/>
-                            <Button Content="📦 Open ZIP" Style="{StaticResource SecondaryButton}"
-                                    Command="{Binding OpenZipCommand}" Margin="0,0,12,8"/>
+                        <!-- QUICK OPEN -->
+                        <WrapPanel>
+                            <Button Content="Browse Folder" Style="{StaticResource PrimaryButton}"
+                                    Command="{Binding BrowseFolderCommand}" Margin="0,0,12,8"
+                                    ToolTip="Select an existing project folder to scan"/>
+                            <Button Content="Open ZIP Archive" Style="{StaticResource SecondaryButton}"
+                                    Command="{Binding OpenZipCommand}" Margin="0,0,12,8"
+                                    ToolTip="Extract and load a GitHub ZIP download"/>
                         </WrapPanel>
                     </StackPanel>
-
                     <!-- PROJECT PAGE -->
                     <StackPanel x:Name="PageProject" Visibility="Collapsed">
                         <TextBlock Text="Project Analysis" FontSize="24" FontWeight="Bold"
-                                   Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
-
-                        <!-- Project Info Card -->
+                                   Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,20"/>
+                        <TextBlock Text="Repository Information" Style="{StaticResource SectionHeader}"/>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,20">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="170"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Project Name"
+                                           Foreground="{StaticResource TextSecondaryBrush}" Margin="0,5"/>
+                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ProjectInfo.Name}"
+                                           Foreground="{StaticResource TextPrimaryBrush}" FontWeight="SemiBold" Margin="0,5"/>
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Location"
+                                           Foreground="{StaticResource TextSecondaryBrush}" Margin="0,5"/>
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding ProjectInfo.Path}"
+                                           Foreground="{StaticResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" Margin="0,5"/>
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Git Remote"
+                                           Foreground="{StaticResource TextSecondaryBrush}" Margin="0,5"/>
+                                <TextBlock Grid.Row="2" Grid.Column="1"
+                                           Text="{Binding ProjectInfo.GitRemote, TargetNullValue='Not configured'}"
+                                           Foreground="{StaticResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" Margin="0,5"/>
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Branch"
+                                           Foreground="{StaticResource TextSecondaryBrush}" Margin="0,5"/>
+                                <TextBlock Grid.Row="3" Grid.Column="1"
+                                           Text="{Binding ProjectInfo.Branch, TargetNullValue='Not a git repository'}"
+                                           Foreground="{StaticResource TextPrimaryBrush}" Margin="0,5"/>
+                                <TextBlock Grid.Row="4" Grid.Column="0" Text="Latest Commit"
+                                           Foreground="{StaticResource TextSecondaryBrush}" Margin="0,5"/>
+                                <TextBlock Grid.Row="4" Grid.Column="1"
+                                           Text="{Binding ProjectInfo.Commit, TargetNullValue='No commits'}"
+                                           Foreground="{StaticResource AccentBrush}" FontFamily="Consolas" Margin="0,5"/>
+                            </Grid>
+                        </Border>
+                        <TextBlock Text="Detected Technologies" Style="{StaticResource SectionHeader}"/>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,20">
+                            <ItemsControl ItemsSource="{Binding Technologies}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <DockPanel Margin="0,6">
+                                            <Border DockPanel.Dock="Left" Width="8" Height="8" CornerRadius="4"
+                                                    Background="{StaticResource SuccessBrush}" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding DisplayName}"
+                                                       Foreground="{StaticResource TextPrimaryBrush}" FontSize="13" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Version}" Foreground="{StaticResource TextSecondaryBrush}"
+                                                       FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Border>
+                        <TextBlock Text="Detected Services" Style="{StaticResource SectionHeader}"
+                                   Visibility="{Binding HasProject, Converter={StaticResource BoolToVis}}"/>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,20"
+                                Visibility="{Binding HasProject, Converter={StaticResource BoolToVis}}">
+                            <ItemsControl ItemsSource="{Binding Services}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <DockPanel Margin="0,5">
+                                            <TextBlock Text="{Binding Name}" Foreground="{StaticResource TextPrimaryBrush}"
+                                                       FontWeight="SemiBold" Width="180"/>
+                                            <TextBlock Text="{Binding Type}" Foreground="{StaticResource TextSecondaryBrush}" Width="120"/>
+                                            <TextBlock Text="{Binding Port, StringFormat='Port: {0}'}"
+                                                       Foreground="{StaticResource AccentBrush}"/>
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Border>
+                        <TextBlock Text="Environment Variables" Style="{StaticResource SectionHeader}"/>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,20">
+                            <ItemsControl ItemsSource="{Binding EnvironmentVars}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <DockPanel Margin="0,5">
+                                            <TextBlock Text="{Binding Key}" Foreground="{StaticResource TextPrimaryBrush}"
+                                                       FontFamily="Consolas" Width="240"/>
+                                            <Border Background="#0A1628" CornerRadius="4" Padding="6,2" Width="78" Margin="0,0,12,0">
+                                                <TextBlock Text="{Binding Status}" FontSize="11"
+                                                           Foreground="{Binding Status, Converter={StaticResource StatusToColor}}"
+                                                           HorizontalAlignment="Center"/>
+                                            </Border>
+                                            <TextBlock Text="{Binding Value}" Foreground="{StaticResource TextSecondaryBrush}"
+                                                       TextTrimming="CharacterEllipsis"/>
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Border>
+                        <WrapPanel Margin="0,4,0,0">
+                            <Button Content="Open Project Folder" Style="{StaticResource SecondaryButton}"
+                                    Command="{Binding OpenProjectFolderCommand}" Margin="0,0,10,8"/>
+                            <Button Content="Pull Latest Changes" Style="{StaticResource SecondaryButton}"
+                                    Command="{Binding UpdateProjectCommand}" Margin="0,0,10,8"/>
+                            <Button Content="Repair and Reinstall" Style="{StaticResource SecondaryButton}"
+                                    Command="{Binding RepairProjectCommand}" Margin="0,0,10,8"/>
+                        </WrapPanel>
+                    </StackPanel>
+                    <!-- ENVIRONMENT PAGE -->
+                    <StackPanel x:Name="PageEnvironment" Visibility="Collapsed">
+                        <DockPanel Margin="0,0,0,20">
+                            <TextBlock Text="Windows Environment" FontSize="24" FontWeight="Bold"
+                                       Foreground="{StaticResource TextPrimaryBrush}" DockPanel.Dock="Left"/>
+                            <Button Content="Run Environment Scan" Style="{StaticResource PrimaryButton}"
+                                    Command="{Binding RunDoctorCommand}" HorizontalAlignment="Right"
+                                    ToolTip="Scan installed runtimes, package managers, network, disk, and PATH"/>
+                        </DockPanel>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="Environment Overview" Style="{StaticResource SectionHeader}"/>
+                                <TextBlock Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap" FontSize="13"
+                                           Text="Run the environment scan to inspect installed runtimes, package managers, Docker, PATH entries, network connectivity, and available disk space. Results are shown in the Activity Log."/>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource CardBorder}">
+                            <StackPanel>
+                                <TextBlock Text="Quick Terminal Access" Style="{StaticResource SectionHeader}"/>
+                                <WrapPanel>
+                                    <Button Content="Open PowerShell" Style="{StaticResource SecondaryButton}"
+                                            Command="{Binding OpenPowerShellCommand}" Margin="0,0,10,8"/>
+                                    <Button Content="Open Command Prompt" Style="{StaticResource SecondaryButton}"
+                                            Command="{Binding OpenCmdCommand}" Margin="0,0,10,8"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                    <!-- SECURITY PAGE -->
+                    <StackPanel x:Name="PageSecurity" Visibility="Collapsed">
+                        <TextBlock Text="Security Scan" FontSize="24" FontWeight="Bold"
+                                   Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,20"/>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="Scan Summary" Style="{StaticResource SectionHeader}"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/><ColumnDefinition/><ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" Background="#0A1628" CornerRadius="8"
+                                            Padding="16,14" Margin="0,0,10,0" BorderBrush="#EF4444" BorderThickness="1">
+                                        <StackPanel>
+                                            <TextBlock Text="Critical" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                            <TextBlock Text="{Binding SecurityResult.CriticalCount, FallbackValue='0'}"
+                                                       FontSize="28" FontWeight="Bold" Foreground="#EF4444"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border Grid.Column="1" Background="#0A1628" CornerRadius="8"
+                                            Padding="16,14" Margin="0,0,10,0" BorderBrush="#F59E0B" BorderThickness="1">
+                                        <StackPanel>
+                                            <TextBlock Text="Warnings" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                            <TextBlock Text="{Binding SecurityResult.WarningCount, FallbackValue='0'}"
+                                                       FontSize="28" FontWeight="Bold" Foreground="#F59E0B"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border Grid.Column="2" Background="#0A1628" CornerRadius="8"
+                                            Padding="16,14" BorderBrush="#10B981" BorderThickness="1">
+                                        <StackPanel>
+                                            <TextBlock Text="Passed" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                            <TextBlock Text="{Binding SecurityResult.PassedCount, FallbackValue='0'}"
+                                                       FontSize="28" FontWeight="Bold" Foreground="#10B981"/>
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource CardBorder}">
+                            <StackPanel>
+                                <TextBlock Text="Scan Details" Style="{StaticResource SectionHeader}"/>
+                                <TextBlock Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap" FontSize="13"
+                                           Text="Security scan results are generated automatically during project analysis. Load a project from the Home tab to run a full audit including dependency vulnerabilities, exposed secrets, and insecure configurations."/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                    <!-- BUILD AND RUN PAGE -->
+                    <StackPanel x:Name="PageBuild" Visibility="Collapsed">
+                        <TextBlock Text="Build and Run" FontSize="24" FontWeight="Bold"
+                                   Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,20"/>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="Operations" Style="{StaticResource SectionHeader}"/>
+                                <WrapPanel>
+                                    <Button Content="Install Dependencies" Style="{StaticResource PrimaryButton}"
+                                            Command="{Binding InstallDependenciesCommand}" Margin="0,0,10,8"
+                                            ToolTip="Run package manager install commands detected in the project"/>
+                                    <Button Content="Build Project" Style="{StaticResource SecondaryButton}"
+                                            Command="{Binding BuildProjectCommand}" Margin="0,0,10,8"
+                                            ToolTip="Execute the detected build command"/>
+                                    <Button Content="Run Tests" Style="{StaticResource SecondaryButton}"
+                                            Command="{Binding TestProjectCommand}" Margin="0,0,10,8"
+                                            ToolTip="Execute the detected test suite"/>
+                                    <Button Content="Launch Project" Style="{StaticResource SuccessButton}"
+                                            Command="{Binding RunProjectCommand}" Margin="0,0,10,8"
+                                            ToolTip="Start the project using the detected run command"/>
+                                    <Button Content="Stop Process" Style="{StaticResource DangerButton}"
+                                            Command="{Binding StopProjectCommand}" Margin="0,0,10,8"
+                                            ToolTip="Terminate the running process"/>
+                                    <Button Content="Cancel Operation" Style="{StaticResource SecondaryButton}"
+                                            Command="{Binding CancelCommand}" Margin="0,0,10,8"
+                                            Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+                        <TextBlock Text="Detected Commands" Style="{StaticResource SectionHeader}"/>
                         <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -202,198 +391,125 @@
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition/><RowDefinition/><RowDefinition/>
-                                    <RowDefinition/><RowDefinition/>
                                 </Grid.RowDefinitions>
-
-                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Project Name" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
-                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ProjectInfo.Name}" Foreground="{StaticResource TextPrimaryBrush}" FontWeight="SemiBold" Margin="0,4"/>
-
-                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Location" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
-                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding ProjectInfo.Path}" Foreground="{StaticResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" Margin="0,4"/>
-
-                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Git Remote" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
-                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding ProjectInfo.GitRemote, TargetNullValue='-'}" Foreground="{StaticResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" Margin="0,4"/>
-
-                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Branch" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
-                                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding ProjectInfo.Branch, TargetNullValue='-'}" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,4"/>
-
-                                <TextBlock Grid.Row="4" Grid.Column="0" Text="Commit" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
-                                <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding ProjectInfo.Commit, TargetNullValue='-'}" Foreground="{StaticResource AccentBrush}" Margin="0,4"/>
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Build Command"
+                                           Foreground="{StaticResource TextSecondaryBrush}" Margin="0,7" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Row="0" Grid.Column="1"
+                                           Text="{Binding ProjectInfo.BuildSystem, TargetNullValue='Not detected'}"
+                                           Foreground="{StaticResource TextPrimaryBrush}" FontFamily="Consolas" Margin="0,7"/>
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Test Command"
+                                           Foreground="{StaticResource TextSecondaryBrush}" Margin="0,7" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Row="1" Grid.Column="1"
+                                           Text="{Binding ProjectInfo.TestSystem, TargetNullValue='Not detected'}"
+                                           Foreground="{StaticResource TextPrimaryBrush}" FontFamily="Consolas" Margin="0,7"/>
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Run Command"
+                                           Foreground="{StaticResource TextSecondaryBrush}" Margin="0,7" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Row="2" Grid.Column="1"
+                                           Text="{Binding ProjectInfo.PrimaryRunCommand, TargetNullValue='Not detected'}"
+                                           Foreground="{StaticResource TextPrimaryBrush}" FontFamily="Consolas" Margin="0,7"/>
                             </Grid>
                         </Border>
-
-                        <!-- Technologies -->
-                        <TextBlock Text="Detected Technologies" FontSize="16" FontWeight="SemiBold"
-                                   Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,8"/>
-                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16">
-                            <ItemsControl ItemsSource="{Binding Technologies}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <DockPanel Margin="0,4">
-                                            <TextBlock DockPanel.Dock="Left" Text="{Binding Status}"
-                                                       Foreground="{StaticResource SuccessBrush}" FontSize="14" Width="24"/>
-                                            <TextBlock Text="{Binding DisplayName}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="13"/>
-                                            <TextBlock Text="{Binding Version}" Foreground="{StaticResource TextSecondaryBrush}"
-                                                       FontSize="12" HorizontalAlignment="Right"/>
-                                        </DockPanel>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </Border>
-
-                        <!-- Services -->
-                        <TextBlock Text="Detected Services" FontSize="16" FontWeight="SemiBold"
-                                   Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,8"
-                                   Visibility="{Binding HasProject, Converter={StaticResource BoolToVis}}"/>
-                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16"
-                                Visibility="{Binding HasProject, Converter={StaticResource BoolToVis}}">
-                            <ItemsControl ItemsSource="{Binding Services}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <DockPanel Margin="0,4">
-                                            <TextBlock Text="{Binding Name}" Foreground="{StaticResource TextPrimaryBrush}" Width="180"/>
-                                            <TextBlock Text="{Binding Type}" Foreground="{StaticResource TextSecondaryBrush}" Width="120"/>
-                                            <TextBlock Text="{Binding Port, StringFormat='Port: {0}'}" Foreground="{StaticResource AccentBrush}"/>
-                                        </DockPanel>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </Border>
-
-                        <!-- Environment Variables -->
-                        <TextBlock Text="Environment Configuration" FontSize="16" FontWeight="SemiBold"
-                                   Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,8"/>
-                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16">
-                            <ItemsControl ItemsSource="{Binding EnvironmentVars}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <DockPanel Margin="0,4">
-                                            <TextBlock Text="{Binding Key}" Foreground="{StaticResource TextPrimaryBrush}"
-                                                       FontFamily="Consolas" Width="250"/>
-                                            <TextBlock Text="{Binding Status}" FontSize="11" Width="80"
-                                                       Foreground="{Binding Status, Converter={StaticResource StatusToColor}}"/>
-                                            <TextBlock Text="{Binding Value}" Foreground="{StaticResource TextSecondaryBrush}"
-                                                       TextTrimming="CharacterEllipsis"/>
-                                        </DockPanel>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </Border>
-
-                        <!-- Action buttons -->
-                        <WrapPanel Margin="0,8,0,0">
-                            <Button Content="ðŸ“‚ Open Project Folder" Style="{StaticResource SecondaryButton}"
-                                    Command="{Binding OpenProjectFolderCommand}" Margin="0,0,8,8"/>
-                            <Button Content="ðŸ”„ Update Project" Style="{StaticResource SecondaryButton}"
-                                    Command="{Binding UpdateProjectCommand}" Margin="0,0,8,8"/>
-                            <Button Content="ðŸ”§ Repair Project" Style="{StaticResource SecondaryButton}"
-                                    Command="{Binding RepairProjectCommand}" Margin="0,0,8,8"/>
-                        </WrapPanel>
-                    </StackPanel>
-
-                    <!-- ENVIRONMENT PAGE -->
-                    <StackPanel x:Name="PageEnvironment" Visibility="Collapsed">
-                        <TextBlock Text="Windows Environment" FontSize="24" FontWeight="Bold"
-                                   Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
-                        <Button Content="ðŸ”§ Run System Diagnostics" Style="{StaticResource PrimaryButton}"
-                                Command="{Binding RunDoctorCommand}" Margin="0,0,0,16"
-                                HorizontalAlignment="Left"/>
-                        <Border Style="{StaticResource CardBorder}">
-                            <TextBlock Text="Click 'Run System Diagnostics' to scan your Windows environment for installed runtimes, tools, and system status."
-                                       Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap"/>
+                        <TextBlock Text="Build Output" Style="{StaticResource SectionHeader}"/>
+                        <Border Style="{StaticResource CardBorder}" MaxHeight="280">
+                            <ListBox ItemsSource="{Binding LogEntries}" Background="Transparent" BorderThickness="0"
+                                     Foreground="{StaticResource TextSecondaryBrush}" FontFamily="Consolas" FontSize="12"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                     VirtualizingPanel.IsVirtualizing="True"/>
                         </Border>
                     </StackPanel>
-
-                    <!-- SECURITY PAGE -->
-                    <StackPanel x:Name="PageSecurity" Visibility="Collapsed">
-                        <TextBlock Text="Security Scan" FontSize="24" FontWeight="Bold"
-                                   Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
-                        <Border Style="{StaticResource CardBorder}">
-                            <TextBlock Text="Security scan results will appear here after project analysis."
-                                       Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap"/>
-                        </Border>
-                    </StackPanel>
-
-                    <!-- BUILD & RUN PAGE -->
-                    <StackPanel x:Name="PageBuild" Visibility="Collapsed">
-                        <TextBlock Text="Build &amp; Run" FontSize="24" FontWeight="Bold"
-                                   Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
-
-                        <WrapPanel Margin="0,0,0,20">
-                            <Button Content="ðŸ“¥ Install Dependencies" Style="{StaticResource PrimaryButton}"
-                                    Command="{Binding InstallDependenciesCommand}" Margin="0,0,12,8"/>
-                            <Button Content="ðŸ”¨ Build" Style="{StaticResource SecondaryButton}"
-                                    Command="{Binding BuildProjectCommand}" Margin="0,0,12,8"/>
-                            <Button Content="ðŸ§ª Test" Style="{StaticResource SecondaryButton}"
-                                    Command="{Binding TestProjectCommand}" Margin="0,0,12,8"/>
-                            <Button Content="â–¶ Run Project" Style="{StaticResource PrimaryButton}"
-                                    Command="{Binding RunProjectCommand}" Margin="0,0,12,8"
-                                    Background="#10B981"/>
-                            <Button Content="â¹ Stop" Style="{StaticResource SecondaryButton}"
-                                    Command="{Binding StopProjectCommand}" Margin="0,0,12,8"
-                                    Background="#EF4444" Foreground="White"/>
-                            <Button Content="âŒ Cancel" Style="{StaticResource SecondaryButton}"
-                                    Command="{Binding CancelCommand}" Margin="0,0,12,8"
-                                    Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"/>
-                        </WrapPanel>
-
-                        <!-- Build/Test/Run info -->
-                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16">
-                            <StackPanel>
-                                <DockPanel Margin="0,4">
-                                    <TextBlock Text="Build Command:" Foreground="{StaticResource TextSecondaryBrush}" Width="140"/>
-                                    <TextBlock Text="{Binding ProjectInfo.BuildSystem, TargetNullValue='Not detected'}"
-                                               Foreground="{StaticResource TextPrimaryBrush}" FontFamily="Consolas"/>
-                                </DockPanel>
-                                <DockPanel Margin="0,4">
-                                    <TextBlock Text="Test Command:" Foreground="{StaticResource TextSecondaryBrush}" Width="140"/>
-                                    <TextBlock Text="{Binding ProjectInfo.TestSystem, TargetNullValue='Not detected'}"
-                                               Foreground="{StaticResource TextPrimaryBrush}" FontFamily="Consolas"/>
-                                </DockPanel>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-
                     <!-- LOGS PAGE -->
                     <StackPanel x:Name="PageLogs" Visibility="Collapsed">
-                        <DockPanel Margin="0,0,0,12">
+                        <DockPanel Margin="0,0,0,16">
                             <TextBlock Text="Activity Log" FontSize="24" FontWeight="Bold"
-                                       Foreground="{StaticResource TextPrimaryBrush}" DockPanel.Dock="Left"/>
-                            <Button Content="📁 Open Log Files" Style="{StaticResource SecondaryButton}"
-                                    Command="{Binding OpenLogsFolderCommand}" HorizontalAlignment="Right"/>
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       DockPanel.Dock="Left" VerticalAlignment="Center"/>
+                            <Button Content="Open Log Files" Style="{StaticResource SecondaryButton}"
+                                    Command="{Binding OpenLogsFolderCommand}" HorizontalAlignment="Right"
+                                    ToolTip="Open log file directory in Windows Explorer"/>
                         </DockPanel>
-                        <Border Style="{StaticResource CardBorder}" MaxHeight="500">
-                            <ListBox ItemsSource="{Binding LogEntries}"
-                                     Background="Transparent" BorderThickness="0"
-                                     Foreground="{StaticResource TextPrimaryBrush}"
-                                     FontFamily="Consolas" FontSize="12"
-                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"/>
+                        <Border Style="{StaticResource CardBorder}" MaxHeight="560">
+                            <ListBox ItemsSource="{Binding LogEntries}" Background="Transparent" BorderThickness="0"
+                                     Foreground="{StaticResource TextSecondaryBrush}" FontFamily="Consolas" FontSize="12"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                     VirtualizingPanel.IsVirtualizing="True"/>
                         </Border>
                     </StackPanel>
-
                     <!-- DIAGNOSTICS PAGE -->
                     <StackPanel x:Name="PageDiagnostics" Visibility="Collapsed">
-                        <TextBlock Text="System Diagnostics" FontSize="24" FontWeight="Bold"
-                                   Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
-                        <Button Content="🩺 Run Doctor" Style="{StaticResource PrimaryButton}"
-                                Command="{Binding RunDoctorCommand}" Margin="0,0,0,16"
-                                HorizontalAlignment="Left"/>
+                        <DockPanel Margin="0,0,0,20">
+                            <TextBlock Text="System Diagnostics" FontSize="24" FontWeight="Bold"
+                                       Foreground="{StaticResource TextPrimaryBrush}" DockPanel.Dock="Left"/>
+                            <Button Content="Run Full Diagnostics" Style="{StaticResource PrimaryButton}"
+                                    Command="{Binding RunDoctorCommand}" HorizontalAlignment="Right"
+                                    ToolTip="Comprehensive environment health check"/>
+                        </DockPanel>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="Checks Performed" Style="{StaticResource SectionHeader}"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition/></Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="Git version and availability"     Foreground="{StaticResource TextSecondaryBrush}" Margin="0,3" FontSize="13"/>
+                                        <TextBlock Text=".NET, Node.js, Python, Java, Go"  Foreground="{StaticResource TextSecondaryBrush}" Margin="0,3" FontSize="13"/>
+                                        <TextBlock Text="winget, Chocolatey, Scoop"        Foreground="{StaticResource TextSecondaryBrush}" Margin="0,3" FontSize="13"/>
+                                        <TextBlock Text="Docker Desktop status"            Foreground="{StaticResource TextSecondaryBrush}" Margin="0,3" FontSize="13"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="Windows version and architecture" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,3" FontSize="13"/>
+                                        <TextBlock Text="Available RAM and disk space"     Foreground="{StaticResource TextSecondaryBrush}" Margin="0,3" FontSize="13"/>
+                                        <TextBlock Text="System PATH entries"             Foreground="{StaticResource TextSecondaryBrush}" Margin="0,3" FontSize="13"/>
+                                        <TextBlock Text="Network connectivity"            Foreground="{StaticResource TextSecondaryBrush}" Margin="0,3" FontSize="13"/>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                        <TextBlock Text="Diagnostics Output" Style="{StaticResource SectionHeader}"/>
                         <Border Style="{StaticResource CardBorder}">
-                            <TextBlock Text="Run the Doctor command to diagnose your Windows environment, check installed runtimes, package managers, Docker, PATH, permissions, network, and disk space."
-                                       Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap"/>
+                            <ListBox ItemsSource="{Binding LogEntries}" Background="Transparent" BorderThickness="0"
+                                     Foreground="{StaticResource TextSecondaryBrush}" FontFamily="Consolas" FontSize="12"
+                                     MaxHeight="340" ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                     VirtualizingPanel.IsVirtualizing="True"/>
                         </Border>
                     </StackPanel>
-
                     <!-- SETTINGS PAGE -->
                     <StackPanel x:Name="PageSettings" Visibility="Collapsed">
                         <TextBlock Text="Settings" FontSize="24" FontWeight="Bold"
-                                   Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+                                   Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,20"/>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="Application Information" Style="{StaticResource SectionHeader}"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Application"
+                                               Foreground="{StaticResource TextSecondaryBrush}" Margin="0,6"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="Mercury Universal Installer"
+                                               Foreground="{StaticResource TextPrimaryBrush}" FontWeight="SemiBold" Margin="0,6"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Version"
+                                               Foreground="{StaticResource TextSecondaryBrush}" Margin="0,6"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="1.0.0"
+                                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,6"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Platform Support"
+                                               Foreground="{StaticResource TextSecondaryBrush}" Margin="0,6"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="Windows 10 / 11  and  macOS Terminal"
+                                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,6"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Projects Directory"
+                                               Foreground="{StaticResource TextSecondaryBrush}" Margin="0,6"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" Text="%LOCALAPPDATA%\Mercury\projects"
+                                               Foreground="{StaticResource AccentBrush}" FontFamily="Consolas" FontSize="12" Margin="0,6"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
                         <Border Style="{StaticResource CardBorder}">
                             <StackPanel>
-                                <TextBlock Text="Application settings will be available in a future update."
-                                           Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap"/>
-                                <TextBlock Text="Version 1.0.0" Foreground="{StaticResource TextSecondaryBrush}"
-                                           Margin="0,12,0,0"/>
+                                <TextBlock Text="Advanced Preferences" Style="{StaticResource SectionHeader}"/>
+                                <TextBlock Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap" FontSize="13"
+                                           Text="Extended configuration options including default shell, proxy settings, and auto-scan preferences will be available in a future release."/>
                             </StackPanel>
                         </Border>
                     </StackPanel>

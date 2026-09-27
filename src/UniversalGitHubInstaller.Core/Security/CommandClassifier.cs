@@ -93,7 +93,7 @@ public class CommandClassifier
 
         // Default: requires confirmation for unknown commands
         result.Safety = CommandSafety.RequiresConfirmation;
-        result.Reason = "Unknown command â€” user confirmation recommended.";
+        result.Reason = "Unknown command - user confirmation recommended.";
         result.ExpectedEffect = "Effect is unknown; review before executing.";
         return result;
     }

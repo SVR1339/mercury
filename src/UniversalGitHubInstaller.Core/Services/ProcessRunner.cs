@@ -33,6 +33,8 @@ public class ProcessRunner
                 WorkingDirectory = workingDirectory ?? Environment.CurrentDirectory,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
+                StandardOutputEncoding = Encoding.UTF8,
+                StandardErrorEncoding = Encoding.UTF8,
                 UseShellExecute = false,
                 CreateNoWindow = true
             };

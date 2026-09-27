@@ -41,14 +41,31 @@ if ! command -v dotnet &>/dev/null; then
     info ".NET runtime not found — Mercury CLI will be self-contained (no runtime needed)"
 fi
 
-# ─── Detect architecture ───
+# ─── Detect OS and architecture ───
+OS=$(uname -s)
 ARCH=$(uname -m)
-case "$ARCH" in
-    x86_64)  RID="osx-x64" ;;
-    arm64)   RID="osx-arm64" ;;
-    *)       error "Unsupported architecture: $ARCH" ;;
+
+case "$OS" in
+    Darwin)
+        case "$ARCH" in
+            x86_64) RID="osx-x64" ;;
+            arm64)  RID="osx-arm64" ;;
+            *)      error "Unsupported macOS architecture: $ARCH" ;;
+        esac
+        info "Detected: macOS $ARCH ($RID)"
+        ;;
+    Linux)
+        case "$ARCH" in
+            x86_64)        RID="linux-x64" ;;
+            aarch64|arm64) RID="linux-arm64" ;;
+            *)             error "Unsupported Linux architecture: $ARCH" ;;
+        esac
+        info "Detected: Linux $ARCH ($RID)"
+        ;;
+    *)
+        error "Unsupported operating system: $OS (macOS or Linux required)"
+        ;;
 esac
-info "Detected: macOS $ARCH ($RID)"
 
 # ─── Download or build ───
 echo ""
