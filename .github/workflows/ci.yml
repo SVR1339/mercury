@@ -24,8 +24,16 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - name: Restore Dependencies
+      - name: Restore Dependencies (Windows)
+        if: matrix.os == 'windows-latest'
         run: dotnet restore UniversalGitHubInstaller.sln
+
+      - name: Restore Dependencies (Linux / macOS)
+        if: matrix.os != 'windows-latest'
+        run: |
+          dotnet restore src/UniversalGitHubInstaller.Core/UniversalGitHubInstaller.Core.csproj
+          dotnet restore src/UniversalGitHubInstaller.Cli/UniversalGitHubInstaller.Cli.csproj
+          dotnet restore tests/UniversalGitHubInstaller.Tests/UniversalGitHubInstaller.Tests.csproj
 
       - name: Build Core, CLI & Tests (Linux / macOS)
         if: matrix.os != 'windows-latest'
